@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bumble Flow - Initial Screen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="phone">
+      <header class="status">9:41</header>
+
+      <section class="hero">
+        <h1>Discover</h1>
+        <p class="pill">See new people in 24 hours</p>
+        <p class="subtitle">
+          Connect over common ground with people who match your vibe, refreshed every day.
+        </p>
+      </section>
+
+      <section class="planner-wrap">
+        <div class="section-head">
+          <h2>Bumble Flow</h2>
+          <span class="free-pill">FREE PLAN</span>
+        </div>
+
+        <article class="planner-card">
+          <div class="row row-disabled">
+            <div class="icon-box">📅</div>
+            <div>
+              <h3>Calendar Sync</h3>
+              <p>Connect to Google Calendar</p>
+            </div>
+            <button class="add">+</button>
+          </div>
+
+          <button class="unlock">Unlock Intent Planner</button>
+
+          <div class="days">
+            <button class="day active">M</button>
+            <button class="day active">T</button>
+            <button class="day active">W</button>
+            <button class="day active">Th</button>
+            <button class="day active">F</button>
+            <button class="day">Sa</button>
+            <button class="day">Su</button>
+          </div>
+
+          <div class="vibe">
+            <h3>Preferred Meeting Vibe</h3>
+            <p>We'll suggest matches of people that are looking for the same vibe</p>
+            <div class="chips">
+              <button>Coffee</button>
+              <button>Drinks</button>
+              <button>Activity</button>
+              <button>Dinner</button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="summary">
+        <h2>Sunset Summary</h2>
+        <div class="cards">
+          <article class="match-card">
+            <img
+              src="https://www.figma.com/api/mcp/asset/0db85f86-5678-4b69-b5db-8e46d904dfc7"
+              alt="Profile"
+              class="match-photo"
+            />
+            <div class="tag-row">
+              <span class="dark-tag">Premium User</span>
+              <span class="dark-tag">Coffee</span>
+            </div>
+            <div class="name-row">
+              <h3>Jennifer, 29</h3>
+              <button class="heart">♡</button>
+            </div>
+            <p class="copy">Pick a time slot you're free to match.</p>
+            <div class="time-row">
+              <button class="time">9AM - 12PM</button>
+              <button class="time">5 - 8PM</button>
+            </div>
+            <div class="action-row">
+              <button class="ghost">Not for me</button>
+              <button class="like">Like</button>
+            </div>
+          </article>
+
+          <article class="match-card peek"></article>
+        </div>
+      </section>
+
+      <nav class="bottom-nav" aria-label="Primary">
+        <a href="#">Profile</a>
+        <a href="#" class="active">Discover</a>
+        <a href="#">People</a>
+        <a href="#">Liked You</a>
+        <a href="#">Chats</a>
+      </nav>
+    </main>
+  </body>
+</html>
