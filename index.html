@@ -4,106 +4,335 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bumble Flow - Initial Screen</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <main class="phone">
-      <header class="status">9:41</header>
-
-      <section class="hero">
-        <h1>Discover</h1>
-        <p class="pill">See new people in 24 hours</p>
-        <p class="subtitle">
-          Connect over common ground with people who match your vibe, refreshed every day.
-        </p>
-      </section>
-
-      <section class="planner-wrap">
-        <div class="section-head">
-          <h2>Bumble Flow</h2>
-          <span class="free-pill">FREE PLAN</span>
+    <main class="phone" data-page="discover" data-plan="free">
+      <header class="status-bar" data-name="Status Bar - iPhone" data-node-id="62:1468">
+        <div class="status-time">9:41</div>
+        <div class="status-island-spacer" aria-hidden="true"></div>
+        <div class="status-levels" aria-hidden="true">
+          <img
+            src="https://www.figma.com/api/mcp/asset/a787e5b4-6134-43a9-85e4-3feb5ea2be45"
+            alt=""
+            class="status-icon status-cell"
+          />
+          <img
+            src="https://www.figma.com/api/mcp/asset/3569e604-6340-4639-a211-71f55a18fb05"
+            alt=""
+            class="status-icon status-wifi"
+          />
+          <img
+            src="https://www.figma.com/api/mcp/asset/dc20d997-9479-4d7b-8259-8297fa0f01e7"
+            alt=""
+            class="status-icon status-battery"
+          />
         </div>
+      </header>
 
-        <article class="planner-card">
-          <div class="row row-disabled">
-            <div class="icon-box">📅</div>
-            <div>
-              <h3>Calendar Sync</h3>
-              <p>Connect to Google Calendar</p>
-            </div>
-            <button class="add">+</button>
+      <div class="screen-content">
+        <section class="hero">
+          <h1 data-node-id="73:644">Discover</h1>
+          <p class="pill" data-name="Top section info" data-node-id="73:645">See new people in 24 hours</p>
+          <p class="subtitle" data-node-id="73:647">
+            Connect over common ground with people who match your vibe, refreshed every day.
+          </p>
+        </section>
+
+        <section class="planner-wrap">
+          <div class="section-head">
+            <h2 class="section-title">Bumble Flow</h2>
           </div>
 
-          <button class="unlock">Unlock Intent Planner</button>
+          <article class="planner-card" data-node-id="67:2419">
+            <button class="unlock-overlay">Unlock Intent Planner</button>
 
-          <div class="days">
-            <button class="day active">M</button>
-            <button class="day active">T</button>
-            <button class="day active">W</button>
-            <button class="day active">Th</button>
-            <button class="day active">F</button>
-            <button class="day">Sa</button>
-            <button class="day">Su</button>
-          </div>
+            <div class="planner-lockable">
+              <div class="calendar-sync-row">
+                <div class="calendar-icon-wrap">
+                  <img src="https://www.figma.com/api/mcp/asset/1dfb05d1-c6c6-49f5-8c46-2bec04873bf9" alt="" />
+                </div>
+                <div class="calendar-copy">
+                  <h3>Calendar Sync</h3>
+                  <p>Connect to Google Calendar</p>
+                </div>
+                <span class="calendar-add" aria-hidden="true"></span>
+              </div>
 
-          <div class="vibe">
-            <h3>Preferred Meeting Vibe</h3>
-            <p>We'll suggest matches of people that are looking for the same vibe</p>
-            <div class="chips">
-              <button>Coffee</button>
-              <button>Drinks</button>
-              <button>Activity</button>
-              <button>Dinner</button>
+              <div class="manual-window-card">
+                <h3>Manual window selection</h3>
+                <p>We’ll suggest matches when you’re most likely available</p>
+                <div class="days">
+                  <button class="day active"><span>M</span><i></i></button>
+                  <button class="day"><span>T</span><i></i></button>
+                  <button class="day"><span>W</span><i></i></button>
+                  <button class="day"><span>TH</span><i></i></button>
+                  <button class="day"><span>F</span><i></i></button>
+                  <button class="day"><span>S</span><i></i></button>
+                  <button class="day"><span>SU</span><i></i></button>
+                </div>
+              </div>
             </div>
-          </div>
-        </article>
-      </section>
 
-      <section class="summary">
-        <h2>Sunset Summary</h2>
-        <div class="cards">
-          <article class="match-card">
-            <img
-              src="https://www.figma.com/api/mcp/asset/0db85f86-5678-4b69-b5db-8e46d904dfc7"
-              alt="Profile"
-              class="match-photo"
-            />
-            <div class="tag-row">
-              <span class="dark-tag">Premium User</span>
-              <span class="dark-tag">Coffee</span>
-            </div>
-            <div class="name-row">
-              <h3>Jennifer, 29</h3>
-              <button class="heart">♡</button>
-            </div>
-            <p class="copy">Pick a time slot you're free to match.</p>
-            <div class="time-row">
-              <button class="time">9AM - 12PM</button>
-              <button class="time">5 - 8PM</button>
-            </div>
-            <div class="action-row">
-              <button class="ghost">Not for me</button>
-              <button class="like">Like</button>
+            <div class="vibe-card">
+              <h3>Preferred Meeting Vibe</h3>
+              <p>We’ll suggest matches of people that are looking for the same vibe</p>
+              <div class="chips">
+                <button>Coffee</button>
+                <button>Drinks</button>
+                <button>Activity</button>
+                <button>Dinner</button>
+              </div>
             </div>
           </article>
+        </section>
 
-          <article class="match-card peek"></article>
+        <section class="summary">
+          <h2 class="section-title">Sunset Summary</h2>
+          <div class="cards">
+            <article class="match-card">
+              <img
+                src="https://www.figma.com/api/mcp/asset/79a7854e-6e91-4300-9801-e7d4ed9a9641"
+                alt="Jennifer"
+                class="match-photo"
+              />
+              <div class="tag-row">
+                <span class="dark-tag premium"
+                  ><img src="https://www.figma.com/api/mcp/asset/1c74e3e1-72cc-423c-93fd-0db3f6fd6c04" alt="" />Premium
+                  User</span
+                >
+                <span class="dark-tag">☕ Coffee</span>
+              </div>
+              <div class="name-row">
+                <h3>Jennifer, 29</h3>
+                <img src="https://www.figma.com/api/mcp/asset/0292a8a4-fd90-4af5-9b4c-c70803335891" alt="" />
+              </div>
+              <p class="copy">Pick a time slot you’re free to match.</p>
+              <div class="time-row">
+                <button class="time">9AM - 12PM</button>
+                <button class="time">5 - 8PM</button>
+              </div>
+              <div class="action-row">
+                <button class="ghost">Not for me</button>
+                <button class="like">Like</button>
+              </div>
+            </article>
+
+            <article class="match-card secondary">
+              <img
+                src="https://www.figma.com/api/mcp/asset/d4462968-658d-47ab-95e2-466a5f57ac31"
+                alt="Ashley"
+                class="match-photo"
+              />
+              <div class="tag-row">
+                <span class="dark-tag premium"
+                  ><img src="https://www.figma.com/api/mcp/asset/1c74e3e1-72cc-423c-93fd-0db3f6fd6c04" alt="" />Premium
+                  User</span
+                >
+              </div>
+              <div class="name-row">
+                <h3>Ashley, 25</h3>
+                <img src="https://www.figma.com/api/mcp/asset/89646b69-2161-4627-a9c0-cb79a7bc0bd8" alt="" />
+              </div>
+              <p class="copy">Pick a time you’re free to match.</p>
+              <div class="time-row">
+                <button class="time">10AM - 11AM</button>
+                <button class="time active">5 - 8PM</button>
+              </div>
+              <div class="action-row">
+                <button class="ghost">Not for me</button>
+                <button class="like">Match &amp; reveal</button>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <section class="paywall" aria-hidden="true" data-node-id="62:1565">
+        <div class="paywall-top">
+          <div class="paywall-premium-sign">PREMIUM+</div>
+          <button class="paywall-close" aria-label="Close paywall">×</button>
+          <h2>Your VIP invite to the best of Bumble</h2>
+        </div>
+
+        <div class="paywall-content">
+          <div class="plan-cards" data-node-id="62:1822">
+            <button class="plan-card selected" data-plan-id="month" data-cta="Get 1 month for $99.99">
+              <span class="plan-duration">1 month</span>
+              <span class="plan-price">$23.33/wk</span>
+              <span class="plan-meta">Most popular</span>
+              <span class="plan-save">Save 53%</span>
+              <span class="plan-radio" aria-hidden="true"></span>
+            </button>
+            <button class="plan-card" data-plan-id="week" data-cta="Get 1 week for $49.99">
+              <span class="plan-duration">1 week</span>
+              <span class="plan-price">$49.99</span>
+              <span class="plan-meta">Most popular</span>
+              <span class="plan-save">Save 53%</span>
+              <span class="plan-radio" aria-hidden="true"></span>
+            </button>
+            <button class="plan-card" data-plan-id="3month" data-cta="Get 3 months for $179.99">
+              <span class="plan-duration">3 months</span>
+              <span class="plan-price">$14/wk</span>
+              <span class="plan-meta">Best value</span>
+              <span class="plan-save">Save 53%</span>
+              <span class="plan-radio" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <div class="paywall-benefits">
+            <p><span>🗓</span>Intelligent Calendar Sync</p>
+            <p><span>👥</span>Fast-track your likes</p>
+            <p><span>👁</span>Stand out every day</p>
+            <p><span>💡</span>Get exclusive photo insights</p>
+            <p><span>💬</span>2c Compliments a week</p>
+            <p><span>⭐</span>10 SuperSwipes a week</p>
+          </div>
+        </div>
+
+        <div class="paywall-bottom">
+          <button class="paywall-cta">Get 1 month for $99.99</button>
         </div>
       </section>
 
-      <nav class="bottom-nav" aria-label="Primary">
-        <a href="#">Profile</a>
-        <a href="#" class="active">Discover</a>
-        <a href="#">People</a>
-        <a href="#">Liked You</a>
-        <a href="#">Chats</a>
+      <nav class="bottom-nav" aria-label="Primary" data-name="Nav Bar" data-node-id="60:33">
+        <div class="nav-variant active" data-variant="discover" data-node-id="60:34">
+          <a class="nav-item" href="?page=profile" data-page-target="profile">
+            <img src="https://www.figma.com/api/mcp/asset/073fa95d-caff-4eec-8eef-1fddb748852e" alt="" />
+            <span>Profile</span>
+          </a>
+          <a class="nav-item active" href="?page=discover" data-page-target="discover">
+            <img src="https://www.figma.com/api/mcp/asset/8920e505-0b50-4528-b1ca-f0d209508052" alt="" />
+            <span>Discover</span>
+          </a>
+          <a class="nav-item" href="?page=people" data-page-target="people">
+            <img src="https://www.figma.com/api/mcp/asset/f63dae87-0f2a-4558-bd98-06151dbe9c36" alt="" />
+            <span>People</span>
+          </a>
+          <a class="nav-item" href="?page=liked" data-page-target="liked">
+            <img src="https://www.figma.com/api/mcp/asset/8700bc18-5913-4cdf-bd59-15f562819621" alt="" />
+            <span>Liked You</span>
+          </a>
+          <a class="nav-item" href="?page=chats" data-page-target="chats">
+            <img src="https://www.figma.com/api/mcp/asset/7baa4649-3d39-4aeb-a49e-9a6d344dfa96" alt="" />
+            <span>Chats</span>
+          </a>
+        </div>
+
+        <div class="nav-variant" data-variant="liked" data-node-id="60:80">
+          <a class="nav-item" href="?page=profile" data-page-target="profile">
+            <img src="https://www.figma.com/api/mcp/asset/dc660cbe-8350-4145-8307-627925c67e9b" alt="" />
+            <span>Profile</span>
+          </a>
+          <a class="nav-item" href="?page=discover" data-page-target="discover">
+            <img src="https://www.figma.com/api/mcp/asset/a61f38de-ed51-41ea-8675-3cc4c2e36598" alt="" />
+            <span>Discover</span>
+          </a>
+          <a class="nav-item" href="?page=people" data-page-target="people">
+            <img src="https://www.figma.com/api/mcp/asset/795c54d7-c7d3-45cb-91df-a5992d209a58" alt="" />
+            <span>People</span>
+          </a>
+          <a class="nav-item active" href="?page=liked" data-page-target="liked">
+            <img src="https://www.figma.com/api/mcp/asset/1b7290f9-55a3-4b37-b662-00668012697a" alt="" />
+            <span>Liked You</span>
+          </a>
+          <a class="nav-item" href="?page=chats" data-page-target="chats">
+            <img src="https://www.figma.com/api/mcp/asset/f8e91447-51e3-4608-83ec-5f2ebd96387b" alt="" />
+            <span>Chats</span>
+          </a>
+        </div>
+
+        <div class="nav-variant" data-variant="chats" data-node-id="60:103">
+          <a class="nav-item" href="?page=profile" data-page-target="profile">
+            <img src="https://www.figma.com/api/mcp/asset/00041cee-c1ec-45a3-a328-cf55edea0358" alt="" />
+            <span>Profile</span>
+          </a>
+          <a class="nav-item" href="?page=discover" data-page-target="discover">
+            <img src="https://www.figma.com/api/mcp/asset/b275dc3a-ad98-4468-b821-3f69ad122c16" alt="" />
+            <span>Discover</span>
+          </a>
+          <a class="nav-item" href="?page=people" data-page-target="people">
+            <img src="https://www.figma.com/api/mcp/asset/5302e9d3-4cb3-4652-a532-ec65e22f7876" alt="" />
+            <span>People</span>
+          </a>
+          <a class="nav-item" href="?page=liked" data-page-target="liked">
+            <img src="https://www.figma.com/api/mcp/asset/8407133f-6727-4525-99f3-205b6ef53deb" alt="" />
+            <span>Liked You</span>
+          </a>
+          <a class="nav-item active" href="?page=chats" data-page-target="chats">
+            <img src="https://www.figma.com/api/mcp/asset/49f7346a-e335-4e1e-8ada-1a14094c135e" alt="" />
+            <span>Chats</span>
+          </a>
+        </div>
       </nav>
     </main>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const queryPage = params.get("page");
+      const queryPlan = params.get("plan");
+      const path = window.location.pathname.toLowerCase();
+      const pathPage = path.includes("liked") ? "liked" : path.includes("chat") ? "chats" : "";
+      const page = queryPage || pathPage || "discover";
+      const pageToVariant = { discover: "discover", liked: "liked", chats: "chats" };
+      const activeVariant = pageToVariant[page] || "discover";
+      const phone = document.querySelector(".phone");
+      const navVariants = document.querySelectorAll(".nav-variant");
+      const unlockButton = document.querySelector(".unlock-overlay");
+      const paywall = document.querySelector(".paywall");
+      const paywallClose = document.querySelector(".paywall-close");
+      const paywallCta = document.querySelector(".paywall-cta");
+      const weekButtons = document.querySelectorAll(".day");
+      const vibeButtons = document.querySelectorAll(".chips button");
+      const planCards = document.querySelectorAll(".plan-card");
+
+      if (phone) {
+        phone.dataset.page = page;
+        if (queryPlan === "free" || queryPlan === "premium") phone.dataset.plan = queryPlan;
+      }
+
+      navVariants.forEach((variant) => {
+        const isActive = variant.dataset.variant === activeVariant;
+        variant.classList.toggle("active", isActive);
+      });
+
+      weekButtons.forEach((button) => {
+        button.addEventListener("click", () => button.classList.toggle("active"));
+      });
+
+      vibeButtons.forEach((button) => {
+        button.addEventListener("click", () => button.classList.toggle("active"));
+      });
+
+      const openPaywall = () => {
+        if (!paywall) return;
+        paywall.classList.add("open");
+        paywall.setAttribute("aria-hidden", "false");
+      };
+
+      const closePaywall = () => {
+        if (!paywall) return;
+        paywall.classList.remove("open");
+        paywall.setAttribute("aria-hidden", "true");
+      };
+
+      if (unlockButton) unlockButton.addEventListener("click", openPaywall);
+      if (paywallClose) paywallClose.addEventListener("click", closePaywall);
+
+      planCards.forEach((card) => {
+        card.addEventListener("click", () => {
+          planCards.forEach((item) => item.classList.remove("selected"));
+          card.classList.add("selected");
+          if (paywallCta && card.dataset.cta) paywallCta.textContent = card.dataset.cta;
+        });
+      });
+
+      if (paywallCta) {
+        paywallCta.addEventListener("click", () => {
+          if (phone) phone.dataset.plan = "premium";
+          closePaywall();
+        });
+      }
+    </script>
   </body>
 </html>
