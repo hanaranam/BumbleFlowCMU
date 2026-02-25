@@ -48,7 +48,7 @@
             <button class="unlock-overlay">Unlock Intent Planner</button>
 
             <div class="planner-lockable">
-              <div class="calendar-sync-row">
+              <div class="calendar-sync-row" data-state="connect">
                 <div class="calendar-icon-wrap">
                   <img src="https://www.figma.com/api/mcp/asset/1dfb05d1-c6c6-49f5-8c46-2bec04873bf9" alt="" />
                 </div>
@@ -56,7 +56,11 @@
                   <h3>Calendar Sync</h3>
                   <p>Connect to Google Calendar</p>
                 </div>
-                <span class="calendar-add" aria-hidden="true"></span>
+                <button class="calendar-action" type="button" aria-label="Connect Calendar">
+                  <span class="calendar-add" aria-hidden="true"></span>
+                  <span class="calendar-loader" aria-hidden="true"></span>
+                  <span class="calendar-connected-pill" aria-hidden="true">Connected</span>
+                </button>
               </div>
 
               <div class="manual-window-card">
@@ -70,6 +74,76 @@
                   <button class="day"><span>F</span><i></i></button>
                   <button class="day"><span>S</span><i></i></button>
                   <button class="day"><span>SU</span><i></i></button>
+                </div>
+              </div>
+
+              <div class="connected-calendar-view" aria-hidden="true">
+                <div class="connected-week" data-node-id="491:73294">
+                  <button class="connected-week-day active" data-day="m">
+                    <span class="weekday-pill">M</span>
+                    <span class="week-count">5</span>
+                  </button>
+                  <button class="connected-week-day" data-day="t">
+                    <span class="weekday-pill">T</span>
+                    <span class="week-count">2</span>
+                  </button>
+                  <button class="connected-week-day" data-day="w">
+                    <span class="weekday-pill">W</span>
+                    <span class="week-count empty">0</span>
+                  </button>
+                  <button class="connected-week-day" data-day="th">
+                    <span class="weekday-pill">TH</span>
+                    <span class="week-count">2</span>
+                  </button>
+                  <button class="connected-week-day" data-day="f">
+                    <span class="weekday-pill">F</span>
+                    <span class="week-count">2</span>
+                  </button>
+                  <button class="connected-week-day" data-day="s">
+                    <span class="weekday-pill">S</span>
+                    <span class="week-count">3</span>
+                  </button>
+                  <button class="connected-week-day" data-day="su">
+                    <span class="weekday-pill">SU</span>
+                    <span class="week-count empty">0</span>
+                  </button>
+                </div>
+                <div class="connected-spots" data-node-id="491:73334">
+                  <div class="connected-day-header">
+                    <div>
+                      <h4 class="connected-day-title">Monday</h4>
+                      <p class="connected-day-subtitle">3 available spots</p>
+                    </div>
+                    <button class="mini-calendar-button" type="button" aria-label="Calendar options">
+                      <img src="https://www.figma.com/api/mcp/asset/1dfb05d1-c6c6-49f5-8c46-2bec04873bf9" alt="" />
+                    </button>
+                  </div>
+                  <div class="connected-time-grid">
+                    <div class="connected-timeline-column" aria-hidden="true"></div>
+                    <div class="connected-time-content">
+                      <div class="connected-time-list"></div>
+                      <div class="connected-empty-state" hidden>
+                        <div class="empty-icon">⚡</div>
+                        <p>No windows detected today.</p>
+                        <button class="empty-add-manual" type="button">+ ADD MANUAL WINDOW</button>
+                      </div>
+                      <div class="manual-window-inline" hidden>
+                        <p class="manual-inline-title">ADD WINDOW</p>
+                        <div class="manual-inline-row">
+                          <input class="manual-inline-input" type="text" placeholder="e.g. 2pm - 4pm" />
+                          <button class="manual-inline-confirm" type="button" aria-label="Confirm window">✓</button>
+                          <button class="manual-inline-cancel" type="button" aria-label="Cancel">×</button>
+                        </div>
+                        <div class="manual-inline-options">
+                          <button type="button" class="manual-option">9:00 AM - 10:00 AM</button>
+                          <button type="button" class="manual-option">12:00 - 2:00 PM</button>
+                          <button type="button" class="manual-option">5:00 - 8:00 PM</button>
+                          <button type="button" class="manual-option">8:00 - 10:00 PM</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="add-more-time" type="button">ADD MORE TIME</button>
                 </div>
               </div>
             </div>
@@ -89,64 +163,172 @@
 
         <section class="summary">
           <h2 class="section-title">Sunset Summary</h2>
+          <p class="summary-subtitle">Matches prioritized for your selected time window and shared interests</p>
           <div class="cards">
-            <article class="match-card">
+            <article class="match-card first-match-card">
               <img
-                src="https://www.figma.com/api/mcp/asset/79a7854e-6e91-4300-9801-e7d4ed9a9641"
-                alt="Jennifer"
+                src="https://www.figma.com/api/mcp/asset/190cb411-37b7-4455-b4c6-d4b80113f549"
+                alt="Lindsey"
                 class="match-photo"
               />
               <div class="tag-row">
-                <span class="dark-tag premium"
-                  ><img src="https://www.figma.com/api/mcp/asset/1c74e3e1-72cc-423c-93fd-0db3f6fd6c04" alt="" />Premium
-                  User</span
-                >
-                <span class="dark-tag">☕ Coffee</span>
+                <span class="yellow-tag">📆 Mon</span>
+                <span class="yellow-tag">📆 Thu</span>
+                <span class="dark-tag">🍽️ Dinner</span>
               </div>
               <div class="name-row">
-                <h3>Jennifer, 29</h3>
-                <img src="https://www.figma.com/api/mcp/asset/0292a8a4-fd90-4af5-9b4c-c70803335891" alt="" />
-              </div>
-              <p class="copy">Pick a time slot you’re free to match.</p>
-              <div class="time-row">
-                <button class="time">9AM - 12PM</button>
-                <button class="time">5 - 8PM</button>
-              </div>
-              <div class="action-row">
-                <button class="ghost">Not for me</button>
-                <button class="like">Like</button>
+                <div class="name-status">
+                  <h3>Lindsey, 26</h3>
+                  <img class="name-verified" src="https://www.figma.com/api/mcp/asset/6f660842-1b2c-48cb-ab56-17da5297978c" alt="" />
+                </div>
+                <button class="name-heart-button first-card-heart" type="button" aria-label="Like Lindsey">
+                  <img class="name-heart" src="https://www.figma.com/api/mcp/asset/8700bc18-5913-4cdf-bd59-15f562819621" alt="" />
+                </button>
               </div>
             </article>
 
-            <article class="match-card secondary">
+            <article class="match-card">
               <img
-                src="https://www.figma.com/api/mcp/asset/d4462968-658d-47ab-95e2-466a5f57ac31"
-                alt="Ashley"
+                src="https://www.figma.com/api/mcp/asset/190cb411-37b7-4455-b4c6-d4b80113f549"
+                alt="Summer"
                 class="match-photo"
               />
               <div class="tag-row">
-                <span class="dark-tag premium"
-                  ><img src="https://www.figma.com/api/mcp/asset/1c74e3e1-72cc-423c-93fd-0db3f6fd6c04" alt="" />Premium
-                  User</span
-                >
+                <span class="yellow-tag">📆 Tue</span>
+                <span class="dark-tag">🍽️ Lunch</span>
               </div>
               <div class="name-row">
-                <h3>Ashley, 25</h3>
-                <img src="https://www.figma.com/api/mcp/asset/89646b69-2161-4627-a9c0-cb79a7bc0bd8" alt="" />
-              </div>
-              <p class="copy">Pick a time you’re free to match.</p>
-              <div class="time-row">
-                <button class="time">10AM - 11AM</button>
-                <button class="time active">5 - 8PM</button>
-              </div>
-              <div class="action-row">
-                <button class="ghost">Not for me</button>
-                <button class="like">Match &amp; reveal</button>
+                <div class="name-status">
+                  <h3>Summer, 27</h3>
+                  <img class="name-verified" src="https://www.figma.com/api/mcp/asset/6f660842-1b2c-48cb-ab56-17da5297978c" alt="" />
+                </div>
+                <button class="name-heart-button" type="button" aria-label="Like Summer">
+                  <img class="name-heart" src="https://www.figma.com/api/mcp/asset/8700bc18-5913-4cdf-bd59-15f562819621" alt="" />
+                </button>
               </div>
             </article>
           </div>
+          <p class="summary-footnote">ⓘ Based on your profile, preferences, and availability</p>
         </section>
       </div>
+
+      <section class="match-flow-overlay" aria-hidden="true">
+        <article class="match-flow-stage stage-match" hidden>
+          <header class="match-flow-head">
+            <button class="match-flow-close" type="button" aria-label="Close match">×</button>
+            <button class="match-flow-menu" type="button" aria-label="More options">⋮</button>
+          </header>
+
+          <div class="match-pair-stack" aria-hidden="true">
+            <div class="pair-photo left"></div>
+            <div class="pair-photo right"></div>
+            <div class="pair-target-icon"></div>
+          </div>
+
+          <div class="match-flow-copy">
+            <h3>What a match!</h3>
+            <p>Now you have 24 hours to start chatting.</p>
+          </div>
+
+          <div class="match-opening-move">
+            <p class="opening-title">Kevin’s Opening Move</p>
+            <div class="opening-bubble">How many episodes of a series is acceptable to watch in one sitting?</div>
+          </div>
+
+          <div class="match-compose">
+            <span>Send a message</span>
+            <button type="button" aria-label="Send message">
+              <span class="match-send-icon" aria-hidden="true"></span>
+            </button>
+          </div>
+        </article>
+      </section>
+
+      <section class="chat-history-overlay" aria-hidden="true">
+        <div class="chat-history-head">
+          <h2>Chats</h2>
+          <button class="chat-search-button" type="button" aria-label="Search chats"><span aria-hidden="true"></span></button>
+        </div>
+
+        <div class="matches-callout">
+          <div class="matches-stack" aria-hidden="true">
+            <div class="matches-card back"></div>
+            <div class="matches-card front"></div>
+            <span class="matches-heart"></span>
+            <span class="matches-count">14</span>
+          </div>
+          <div class="matches-copy">
+            <p>People are waiting to talk to you. Like them back to start chatting.</p>
+            <a href="#">See who’s liked you</a>
+          </div>
+        </div>
+
+        <div class="chat-recent-head">
+          <h3>Chats (Recent)</h3>
+          <button class="chat-filter-button" type="button" aria-label="Filter chats"><span aria-hidden="true"></span></button>
+        </div>
+
+        <article class="opening-moves-card">
+          <div class="opening-thumb" aria-hidden="true"></div>
+          <div class="opening-copy">
+            <strong>Need help with the first message?</strong>
+            <p>Try Opening Moves.</p>
+          </div>
+          <span class="opening-arrow" aria-hidden="true"></span>
+        </article>
+
+        <button class="chat-history-item open-lindsey-chat" type="button">
+          <span class="chat-avatar-wrap"><span class="chat-avatar"></span></span>
+          <span class="chat-history-copy">
+            <strong>Lindsey</strong>
+            <small>How many episodes of a series is acceptabl...</small>
+            <small>Conversation expires in <b>24 hours</b></small>
+          </span>
+        </button>
+      </section>
+
+      <section class="chat-thread-overlay" aria-hidden="true">
+        <header class="chat-thread-topbar">
+          <div class="chat-thread-left">
+            <button class="chat-thread-back" type="button" aria-label="Back to chats">‹</button>
+            <span class="chat-thread-avatar" aria-hidden="true"></span>
+            <h3>Lindsey</h3>
+          </div>
+          <div class="chat-thread-actions">
+            <button class="thread-icon phone" type="button" aria-label="Call"></button>
+            <button class="thread-icon video" type="button" aria-label="Video call"></button>
+            <button class="thread-icon calendar" type="button" aria-label="Open calendar"></button>
+            <button class="thread-icon menu" type="button" aria-label="More options"></button>
+          </div>
+        </header>
+
+        <div class="chat-thread-body">
+          <article class="opening-move-bubble">
+            <p class="opening-move-title">Your Opening Move</p>
+            <p>How many episodes of a series is acceptable to watch in one sitting?</p>
+          </article>
+
+          <article class="schedule-options-card">
+            <h4>No direct overlaps — but we found good options.</h4>
+            <p>Times tailored to your shared vibe and availability.</p>
+            <div class="time-options-grid">
+              <button type="button">9:30 - 10:30AM</button>
+              <button type="button">11:00 AM - 12:00 PM</button>
+              <button type="button">12:30 - 1:30 PM</button>
+              <button type="button">2:00 - 3:00 PM</button>
+            </div>
+            <a href="#">Look at more times ›</a>
+          </article>
+        </div>
+
+        <div class="chat-thread-compose">
+          <button class="thread-icon camera" type="button" aria-label="Open camera"></button>
+          <div class="chat-thread-input-shell">
+            <input type="text" value="Aa" aria-label="Message input" />
+            <button class="thread-icon gif" type="button" aria-label="Open GIF picker"></button>
+          </div>
+        </div>
+      </section>
 
       <section class="paywall" aria-hidden="true" data-node-id="62:1565">
         <div class="paywall-top">
@@ -181,12 +363,58 @@
           </div>
 
           <div class="paywall-benefits">
-            <p><span>🗓</span>Intelligent Calendar Sync</p>
-            <p><span>👥</span>Fast-track your likes</p>
-            <p><span>👁</span>Stand out every day</p>
-            <p><span>💡</span>Get exclusive photo insights</p>
-            <p><span>💬</span>2c Compliments a week</p>
-            <p><span>⭐</span>10 SuperSwipes a week</p>
+            <div class="benefit-row">
+              <span class="benefit-icon"><img src="https://www.figma.com/api/mcp/asset/b5c191ca-ebb9-47fc-8010-40a72cabcc90" alt="" /></span>
+              <div class="benefit-copy">
+                <h3>Intelligent Calendar Sync</h3>
+                <p>Stay active whenever your schedule allows</p>
+              </div>
+            </div>
+            <div class="benefit-row">
+              <span class="benefit-icon"><img src="https://www.figma.com/api/mcp/asset/6d99a9d3-eaa2-42cd-928c-5fd63db7c81b" alt="" /></span>
+              <div class="benefit-copy">
+                <h3>Fast-track your likes</h3>
+                <p>Be seen sooner by people you’ve liked</p>
+              </div>
+            </div>
+            <div class="benefit-row">
+              <span class="benefit-icon"><img src="https://www.figma.com/api/mcp/asset/9533f93e-e7c7-40f9-a3ad-c8d266feea0e" alt="" /></span>
+              <div class="benefit-copy">
+                <h3>Stand out every day</h3>
+                <p>We’ll boost your profile at the best times</p>
+              </div>
+            </div>
+            <div class="benefit-row">
+              <span class="benefit-icon benefit-icon-bulb">
+                <span class="bulb-group"><img src="https://www.figma.com/api/mcp/asset/878190b6-3988-4414-9553-9d6a19e665fe" alt="" /></span>
+                <span class="bulb-overlay"><img src="https://www.figma.com/api/mcp/asset/572885f1-cd96-49b3-a215-a542b405f1e1" alt="" /></span>
+              </span>
+              <div class="benefit-copy">
+                <h3>Get exclusive photo insights</h3>
+                <p>See which photos people love most</p>
+              </div>
+            </div>
+            <div class="benefit-row">
+              <span class="benefit-icon"><img src="https://www.figma.com/api/mcp/asset/bb0eaed0-c825-4895-b3d8-7c09ca8a9f7a" alt="" /></span>
+              <div class="benefit-copy">
+                <h3>2c Compliments a week</h3>
+                <p>Send a kind note before you match</p>
+              </div>
+            </div>
+            <div class="benefit-row">
+              <span class="benefit-icon"><img src="https://www.figma.com/api/mcp/asset/f21cad57-b9dd-4306-83d2-9852f9e73605" alt="" /></span>
+              <div class="benefit-copy">
+                <h3>10 SuperSwipes a week</h3>
+                <p>Be bold and get your likes noticed</p>
+              </div>
+            </div>
+            <div class="benefit-row">
+              <span class="benefit-icon"><img src="https://www.figma.com/api/mcp/asset/cc9c9275-3836-462c-8f28-ac518eabc8e6" alt="" /></span>
+              <div class="benefit-copy">
+                <h3>2 Spotlights a week</h3>
+                <p>Be shown ahead of the rest for 30 mins</p>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -266,7 +494,6 @@
         </div>
       </nav>
     </main>
-
     <script>
       const params = new URLSearchParams(window.location.search);
       const queryPage = params.get("page");
@@ -282,19 +509,360 @@
       const paywall = document.querySelector(".paywall");
       const paywallClose = document.querySelector(".paywall-close");
       const paywallCta = document.querySelector(".paywall-cta");
+      const firstCardHeart = document.querySelector(".first-card-heart");
+      const matchFlowOverlay = document.querySelector(".match-flow-overlay");
+      const matchFinalStage = document.querySelector(".stage-match");
+      const matchFlowClose = document.querySelector(".match-flow-close");
+      const chatHistoryOverlay = document.querySelector(".chat-history-overlay");
+      const openLindseyChatButton = document.querySelector(".open-lindsey-chat");
+      const chatThreadOverlay = document.querySelector(".chat-thread-overlay");
+      const chatThreadBack = document.querySelector(".chat-thread-back");
       const weekButtons = document.querySelectorAll(".day");
       const vibeButtons = document.querySelectorAll(".chips button");
       const planCards = document.querySelectorAll(".plan-card");
+      const plannerLockable = document.querySelector(".planner-lockable");
+      const calendarRow = document.querySelector(".calendar-sync-row");
+      const calendarAction = document.querySelector(".calendar-action");
+      const manualWindowCard = document.querySelector(".manual-window-card");
+      const connectedView = document.querySelector(".connected-calendar-view");
+      const connectedWeekButtons = document.querySelectorAll(".connected-week-day");
+      const connectedDayTitle = document.querySelector(".connected-day-title");
+      const connectedDaySubtitle = document.querySelector(".connected-day-subtitle");
+      const connectedTimelineColumn = document.querySelector(".connected-timeline-column");
+      const connectedTimeList = document.querySelector(".connected-time-list");
+      const connectedEmptyState = document.querySelector(".connected-empty-state");
+      const manualInlineWrap = document.querySelector(".manual-window-inline");
+      const manualInlineInput = document.querySelector(".manual-inline-input");
+      const manualInlineConfirm = document.querySelector(".manual-inline-confirm");
+      const manualInlineCancel = document.querySelector(".manual-inline-cancel");
+      const addMoreTimeButton = document.querySelector(".add-more-time");
+      const emptyAddManualButton = document.querySelector(".empty-add-manual");
+      const manualOptions = document.querySelectorAll(".manual-option");
+      const normalizeWindow = (value) => value.replace(/\s+/g, " ").trim().toLowerCase();
+      let calendarSequenceTimeouts = [];
+      const initialConnectedDayData = {
+        m: { label: "Monday", slots: ["9:30 - 10:30 AM", "11:00 AM - 12:00 PM", "12:30 - 1:30 PM", "2:00 - 3:00 PM", "7:00 - 9:00 PM"] },
+        t: { label: "Tuesday", slots: ["10:00 AM - 11:00 AM", "6:00 - 8:00 PM"] },
+        w: { label: "Wednesday", slots: [] },
+        th: { label: "Thursday", slots: ["9:00 - 10:00 AM", "5:00 - 6:30 PM"] },
+        f: { label: "Friday", slots: ["11:00 AM - 12:00 PM", "7:00 - 9:00 PM"] },
+        s: { label: "Saturday", slots: ["10:00 AM - 11:30 AM", "1:00 - 3:00 PM", "7:30 - 9:00 PM"] },
+        su: { label: "Sunday", slots: [] },
+      };
+      let connectedDayData = JSON.parse(JSON.stringify(initialConnectedDayData));
+      let activeConnectedDay = "m";
+      const starredSlots = new Set();
+      let manualTargetDay = "w";
+      let inlineEditorVisible = false;
+      let matchFlowTimeouts = [];
+      let chatThreadCloseTimeout = null;
+
+      const toDataUri = (svg) => `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+      const svgIcons = {
+        navPerson: {
+          outline: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="7.2" r="3.2" fill="none" stroke="#111" stroke-width="1.7"/><rect x="5.4" y="12.3" width="13.2" height="6.4" rx="3.2" fill="none" stroke="#111" stroke-width="1.7"/></svg>`,
+          filled: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="7.2" r="3.2" fill="#111"/><rect x="5.4" y="12.3" width="13.2" height="6.4" rx="3.2" fill="#111"/></svg>`,
+        },
+        navDiscover: {
+          outline: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.6" fill="none" stroke="#111" stroke-width="1.7"/><path d="M9.5 14.5L11.7 9.4L16.6 7.4L14.3 12.5L9.5 14.5Z" fill="none" stroke="#111" stroke-width="1.4" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.2" fill="#111"/></svg>`,
+          filled: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.6" fill="#111"/><path d="M9.5 14.5L11.7 9.4L16.6 7.4L14.3 12.5L9.5 14.5Z" fill="#fff"/><circle cx="12" cy="12" r="1.2" fill="#fff"/></svg>`,
+        },
+        navBumble: {
+          outline: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="7.6,6.2 16.4,6.2 19.7,12 16.4,17.8 7.6,17.8 4.3,12" fill="none" stroke="#111" stroke-width="1.7" stroke-linejoin="round"/><path d="M9 9.2H15M8.2 12H15.8M9 14.8H15" stroke="#111" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+          filled: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><polygon points="7.6,6.2 16.4,6.2 19.7,12 16.4,17.8 7.6,17.8 4.3,12" fill="#111"/><path d="M9 9.2H15M8.2 12H15.8M9 14.8H15" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+        },
+        navHeart: {
+          outline: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18.8S5.2 14.2 5.2 9.3C5.2 7 7 5.2 9.2 5.2C10.5 5.2 11.7 5.8 12.4 6.9C13.1 5.8 14.3 5.2 15.6 5.2C17.8 5.2 19.6 7 19.6 9.3C19.6 14.2 12.8 18.8 12 18.8Z" fill="none" stroke="#111" stroke-width="1.7" stroke-linejoin="round"/></svg>`,
+          filled: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18.8S5.2 14.2 5.2 9.3C5.2 7 7 5.2 9.2 5.2C10.5 5.2 11.7 5.8 12.4 6.9C13.1 5.8 14.3 5.2 15.6 5.2C17.8 5.2 19.6 7 19.6 9.3C19.6 14.2 12.8 18.8 12 18.8Z" fill="#111"/></svg>`,
+        },
+        navChat: {
+          outline: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 5.3C7.7 5.3 4.3 8.4 4.3 12.2C4.3 14.2 5.3 16 7 17.3L6.3 19.4L8.9 18.2C9.8 18.5 10.9 18.7 12 18.7C16.3 18.7 19.7 15.6 19.7 11.8C19.7 8 16.3 5.3 12 5.3Z" fill="none" stroke="#111" stroke-width="1.7" stroke-linejoin="round"/></svg>`,
+          filled: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 5.3C7.7 5.3 4.3 8.4 4.3 12.2C4.3 14.2 5.3 16 7 17.3L6.3 19.4L8.9 18.2C9.8 18.5 10.9 18.7 12 18.7C16.3 18.7 19.7 15.6 19.7 11.8C19.7 8 16.3 5.3 12 5.3Z" fill="#111"/></svg>`,
+        },
+        statusCell: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 13"><rect x="1" y="9.5" width="2.8" height="2.5" rx="0.8" fill="#111"/><rect x="5.4" y="7.4" width="2.8" height="4.6" rx="0.8" fill="#111"/><rect x="9.8" y="5.2" width="2.8" height="6.8" rx="0.8" fill="#111"/><rect x="14.2" y="3" width="2.8" height="9" rx="0.8" fill="#111"/></svg>`,
+        statusWifi: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 13"><path d="M1.3 4.3C3.3 2.4 6 1.3 9 1.3C12 1.3 14.7 2.4 16.7 4.3" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round"/><path d="M3.9 7C5.3 5.8 7.1 5.1 9 5.1C10.9 5.1 12.7 5.8 14.1 7" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round"/><circle cx="9" cy="9.8" r="1.3" fill="#111"/></svg>`,
+        statusBattery: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 13"><rect x="1" y="1" width="23" height="11" rx="3" fill="none" stroke="#111" stroke-width="1.4"/><rect x="3" y="3" width="17" height="7" rx="2" fill="#111"/><rect x="24.5" y="4.1" width="2.3" height="4.8" rx="1.1" fill="#111"/></svg>`,
+        calendar: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="4.5" y="5.5" width="15" height="14" rx="2" fill="none" stroke="#111" stroke-width="1.8"/><path d="M4.5 9.2H19.5" stroke="#111" stroke-width="1.8" stroke-linecap="round"/><path d="M8.2 4.5V7M15.8 4.5V7" stroke="#111" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+        summaryHeart: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18.8S5.2 14.2 5.2 9.3C5.2 7 7 5.2 9.2 5.2C10.5 5.2 11.7 5.8 12.4 6.9C13.1 5.8 14.3 5.2 15.6 5.2C17.8 5.2 19.6 7 19.6 9.3C19.6 14.2 12.8 18.8 12 18.8Z" fill="none" stroke="#111" stroke-width="1.7" stroke-linejoin="round"/></svg>`,
+        verified: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 22 22"><path d="M11 2.6L14.1 3.4L16.8 2L18.4 4.8L21.2 6.4L19.8 9.1L20.6 12.2L17.8 13.8L16.2 16.6L13.5 15.2L10.4 16L8.8 13.2L6 11.6L7.4 8.9L6.6 5.8L9.4 4.2L11 1.4Z" fill="none" stroke="#111" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.5 11.3L10.4 13.1L13.8 8.8" fill="none" stroke="#111" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+        photoFallback: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 360"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e9e1d9"/><stop offset="100%" stop-color="#d4c7b8"/></linearGradient></defs><rect width="300" height="360" rx="14" fill="url(#bg)"/><circle cx="150" cy="122" r="54" fill="#f4eee6"/><rect x="84" y="182" width="132" height="118" rx="62" fill="#f4eee6"/></svg>`,
+        avatarFallback: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80"><defs><linearGradient id="av" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#e7ded2"/><stop offset="100%" stop-color="#cfbfa9"/></linearGradient></defs><rect width="80" height="80" rx="40" fill="url(#av)"/><circle cx="40" cy="31" r="12" fill="#efe8de"/><rect x="23" y="46" width="34" height="23" rx="12" fill="#efe8de"/></svg>`,
+        iconFallback: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="4" fill="none" stroke="#111" stroke-width="1.6"/><circle cx="9" cy="9.2" r="1.8" fill="#111"/><path d="M6.8 16.8L10.4 13.2L13 15.6L16.6 12L17.2 16.8Z" fill="#111"/></svg>`,
+      };
+
+      const navIconKindByTarget = {
+        profile: "navPerson",
+        discover: "navDiscover",
+        people: "navBumble",
+        liked: "navHeart",
+        chats: "navChat",
+      };
+
+      const applyStatusBarIcons = () => {
+        const cell = document.querySelector(".status-cell");
+        const wifi = document.querySelector(".status-wifi");
+        const battery = document.querySelector(".status-battery");
+        if (cell) cell.src = toDataUri(svgIcons.statusCell);
+        if (wifi) wifi.src = toDataUri(svgIcons.statusWifi);
+        if (battery) battery.src = toDataUri(svgIcons.statusBattery);
+      };
+
+      const applyCalendarIcons = () => {
+        document.querySelectorAll(".calendar-icon-wrap img, .mini-calendar-button img").forEach((icon) => {
+          icon.src = toDataUri(svgIcons.calendar);
+        });
+      };
+
+      const applyBottomNavIcons = () => {
+        document.querySelectorAll(".nav-item").forEach((item) => {
+          const icon = item.querySelector("img");
+          if (!icon) return;
+          const target = item.dataset.pageTarget;
+          const iconKind = target ? navIconKindByTarget[target] : null;
+          if (!iconKind) return;
+          const iconSet = svgIcons[iconKind];
+          const iconState = item.classList.contains("active") ? "filled" : "outline";
+          icon.src = toDataUri(iconSet[iconState]);
+        });
+      };
+
+      const applySummaryIcons = () => {
+        document.querySelectorAll(".name-heart").forEach((icon) => {
+          icon.src = toDataUri(svgIcons.summaryHeart);
+        });
+        document.querySelectorAll(".name-verified").forEach((icon) => {
+          icon.src = toDataUri(svgIcons.verified);
+        });
+      };
+
+      const applyFigmaImageFallbacks = () => {
+        const photoFallback = toDataUri(svgIcons.photoFallback);
+        const avatarFallback = toDataUri(svgIcons.avatarFallback);
+        const iconFallback = toDataUri(svgIcons.iconFallback);
+        document.querySelectorAll('img[src*="figma.com/api/mcp/asset"]').forEach((img) => {
+          if (img.classList.contains("status-icon") || img.classList.contains("name-heart") || img.classList.contains("name-verified")) return;
+          const fallback =
+            img.classList.contains("match-photo") || img.classList.contains("match-flow-photo")
+              ? photoFallback
+              : img.closest(".chat-thread-head, .chat-history-item")
+                ? avatarFallback
+                : iconFallback;
+          img.addEventListener("error", () => {
+            img.src = fallback;
+          });
+          if (img.complete && img.naturalWidth === 0) img.src = fallback;
+        });
+      };
+
+      const clearMatchFlowTimeouts = () => {
+        matchFlowTimeouts.forEach((id) => clearTimeout(id));
+        matchFlowTimeouts = [];
+      };
+
+      const setActiveVariantUi = (variantName) => {
+        navVariants.forEach((variant) => {
+          const isActive = variant.dataset.variant === variantName;
+          variant.classList.toggle("active", isActive);
+        });
+        applyBottomNavIcons();
+      };
+
+      const openChatHistory = () => {
+        if (!phone || !chatHistoryOverlay) return;
+        phone.dataset.page = "chats";
+        setActiveVariantUi("chats");
+        phone.classList.remove("chat-thread-open");
+        chatHistoryOverlay.classList.add("open");
+        chatHistoryOverlay.setAttribute("aria-hidden", "false");
+      };
+
+      const closeChatThread = () => {
+        if (!chatThreadOverlay || !phone) return;
+        if (chatThreadCloseTimeout) window.clearTimeout(chatThreadCloseTimeout);
+        chatThreadOverlay.classList.add("closing");
+        chatThreadCloseTimeout = window.setTimeout(() => {
+          chatThreadOverlay.classList.remove("open", "closing");
+          chatThreadOverlay.setAttribute("aria-hidden", "true");
+          phone.classList.remove("chat-thread-open");
+          chatThreadCloseTimeout = null;
+        }, 280);
+      };
+
+      const openChatThread = () => {
+        if (!chatThreadOverlay || !phone) return;
+        if (chatThreadCloseTimeout) {
+          window.clearTimeout(chatThreadCloseTimeout);
+          chatThreadCloseTimeout = null;
+        }
+        chatThreadOverlay.classList.remove("closing");
+        chatThreadOverlay.classList.add("open");
+        chatThreadOverlay.setAttribute("aria-hidden", "false");
+        phone.classList.add("chat-thread-open");
+      };
+
+      const openMatchFlow = () => {
+        if (!matchFlowOverlay || !matchFinalStage) return;
+        clearMatchFlowTimeouts();
+        matchFlowOverlay.classList.remove("closing");
+        matchFlowOverlay.classList.add("open");
+        matchFlowOverlay.setAttribute("aria-hidden", "false");
+        matchFinalStage.hidden = false;
+        if (phone) phone.classList.add("matching-open");
+      };
+
+      const closeMatchFlowToChats = () => {
+        if (!matchFlowOverlay) return;
+        clearMatchFlowTimeouts();
+        matchFlowOverlay.classList.add("closing");
+        const closeAndOpenChats = window.setTimeout(() => {
+          matchFlowOverlay.classList.remove("open", "closing");
+          matchFlowOverlay.setAttribute("aria-hidden", "true");
+          if (matchFinalStage) matchFinalStage.hidden = true;
+          if (phone) phone.classList.remove("matching-open");
+          openChatHistory();
+        }, 300);
+        matchFlowTimeouts.push(closeAndOpenChats);
+      };
+
+      const resetConnectedDayData = () => {
+        connectedDayData = JSON.parse(JSON.stringify(initialConnectedDayData));
+        activeConnectedDay = "m";
+        manualTargetDay = "w";
+        starredSlots.clear();
+        inlineEditorVisible = false;
+      };
+
+      const openInlineEditor = () => {
+        inlineEditorVisible = true;
+        if (manualInlineWrap) manualInlineWrap.hidden = false;
+        if (manualInlineInput) manualInlineInput.focus();
+      };
+
+      const closeInlineEditor = () => {
+        inlineEditorVisible = false;
+        if (manualInlineWrap) manualInlineWrap.hidden = true;
+        if (manualInlineInput) {
+          manualInlineInput.value = "";
+          manualInlineInput.classList.remove("filled");
+        }
+        refreshManualOptions();
+      };
+
+      const refreshManualOptions = () => {
+        if (!manualInlineInput) return;
+        const activeDaySlots = connectedDayData[manualTargetDay]?.slots || [];
+        const selectedValue = normalizeWindow(manualInlineInput.value);
+        const takenValues = new Set(activeDaySlots.map((slot) => normalizeWindow(slot)));
+
+        manualOptions.forEach((button) => {
+          const optionValue = normalizeWindow(button.dataset.value || button.textContent || "");
+          button.hidden = takenValues.has(optionValue) || (!!selectedValue && optionValue === selectedValue);
+        });
+      };
+
+      const updateConnectedWeekUi = () => {
+        connectedWeekButtons.forEach((button) => {
+          const day = button.dataset.day;
+          const countPill = button.querySelector(".week-count");
+          const count = day && connectedDayData[day] ? connectedDayData[day].slots.length : 0;
+          if (countPill) {
+            countPill.textContent = String(count);
+            countPill.classList.toggle("empty", count === 0);
+          }
+          button.classList.toggle("active", day === activeConnectedDay);
+        });
+      };
+
+      const renderTimeline = (slotCount) => {
+        if (!connectedTimelineColumn) return;
+        connectedTimelineColumn.innerHTML = "";
+        const segments = slotCount > 0 ? slotCount : 1;
+        for (let i = 0; i < segments; i += 1) {
+          const segment = document.createElement("div");
+          segment.className = "timeline-segment";
+          connectedTimelineColumn.appendChild(segment);
+        }
+      };
+
+      const renderConnectedDay = () => {
+        const day = connectedDayData[activeConnectedDay];
+        if (!day || !connectedDayTitle || !connectedDaySubtitle || !connectedTimeList || !connectedEmptyState || !addMoreTimeButton)
+          return;
+
+        const slotCount = day.slots.length;
+        connectedDayTitle.textContent = day.label;
+        connectedDaySubtitle.textContent = `${slotCount} available spots`;
+        updateConnectedWeekUi();
+        renderTimeline(slotCount);
+        manualTargetDay = activeConnectedDay;
+        refreshManualOptions();
+
+        if (slotCount === 0) {
+          connectedTimeList.hidden = true;
+          connectedTimeList.innerHTML = "";
+          connectedEmptyState.hidden = inlineEditorVisible;
+          if (manualInlineWrap) manualInlineWrap.hidden = !inlineEditorVisible;
+          addMoreTimeButton.hidden = true;
+          if (connectedTimelineColumn) {
+            const refHeight = manualInlineWrap && !manualInlineWrap.hidden ? manualInlineWrap.offsetHeight : connectedEmptyState.offsetHeight;
+            connectedTimelineColumn.style.setProperty("--timeline-line-height", `${Math.max(160, refHeight)}px`);
+          }
+          return;
+        }
+
+        connectedEmptyState.hidden = true;
+        if (manualInlineWrap) manualInlineWrap.hidden = !inlineEditorVisible;
+        addMoreTimeButton.hidden = false;
+        connectedTimeList.hidden = false;
+        connectedTimeList.innerHTML = day.slots
+          .map((time) => {
+            const slotId = `${activeConnectedDay}|${time}`;
+            const isStarred = starredSlots.has(slotId);
+            return `
+              <article class="connected-time-row ${isStarred ? "starred" : ""}" data-slot="${time}">
+                <div class="time-copy">
+                  <h5>${time}</h5>
+                  <p class="time-label">1H FREE</p>
+                </div>
+                <div class="row-actions">
+                  <button class="star-button ${isStarred ? "active" : ""}" type="button" aria-label="Favorite slot">${isStarred ? "★" : "☆"}</button>
+                  <button class="remove-button" type="button" aria-label="Remove slot">×</button>
+                </div>
+              </article>
+            `;
+          })
+          .join("");
+        if (connectedTimelineColumn) {
+          connectedTimelineColumn.style.setProperty("--timeline-line-height", `${connectedTimeList.offsetHeight}px`);
+        }
+      };
+
+      const resetCalendarUi = () => {
+        if (!phone || !calendarRow || !calendarAction || !connectedView) return;
+        calendarRow.dataset.state = "connect";
+        phone.dataset.calendar = "idle";
+        calendarAction.disabled = false;
+        closeInlineEditor();
+        resetConnectedDayData();
+        if (manualWindowCard) manualWindowCard.hidden = false;
+        if (plannerLockable) plannerLockable.dataset.synced = "false";
+        connectedView.classList.remove("active");
+        connectedView.setAttribute("aria-hidden", "true");
+        if (addMoreTimeButton) addMoreTimeButton.hidden = false;
+        if (connectedEmptyState) connectedEmptyState.hidden = true;
+        renderConnectedDay();
+      };
 
       if (phone) {
         phone.dataset.page = page;
         if (queryPlan === "free" || queryPlan === "premium") phone.dataset.plan = queryPlan;
+        if (phone.dataset.plan !== "premium") resetCalendarUi();
       }
-
-      navVariants.forEach((variant) => {
-        const isActive = variant.dataset.variant === activeVariant;
-        variant.classList.toggle("active", isActive);
-      });
+      applyStatusBarIcons();
+      applyCalendarIcons();
+      applySummaryIcons();
+      setActiveVariantUi(activeVariant);
+      applyFigmaImageFallbacks();
 
       weekButtons.forEach((button) => {
         button.addEventListener("click", () => button.classList.toggle("active"));
@@ -330,7 +898,158 @@
       if (paywallCta) {
         paywallCta.addEventListener("click", () => {
           if (phone) phone.dataset.plan = "premium";
+          resetCalendarUi();
           closePaywall();
+        });
+      }
+
+      if (firstCardHeart) {
+        firstCardHeart.addEventListener("click", () => {
+          if (!phone) return;
+          if (phone.dataset.plan !== "premium") {
+            openPaywall();
+            return;
+          }
+          openMatchFlow();
+        });
+      }
+
+      if (matchFlowClose) {
+        matchFlowClose.addEventListener("click", closeMatchFlowToChats);
+      }
+
+      if (openLindseyChatButton) {
+        openLindseyChatButton.addEventListener("click", openChatThread);
+      }
+
+      if (chatThreadBack) {
+        chatThreadBack.addEventListener("click", closeChatThread);
+      }
+
+      const clearCalendarTimeouts = () => {
+        calendarSequenceTimeouts.forEach((id) => clearTimeout(id));
+        calendarSequenceTimeouts = [];
+      };
+
+      const syncCalendar = () => {
+        if (!phone || !calendarRow || !calendarAction || !connectedView) return;
+        if (phone.dataset.plan !== "premium") return;
+        if (phone.dataset.calendar === "synced") return;
+
+        clearCalendarTimeouts();
+        calendarAction.disabled = true;
+        calendarRow.dataset.state = "loading";
+
+        const showConnected = window.setTimeout(() => {
+          calendarRow.dataset.state = "connected";
+        }, 1800);
+
+        const showSyncedScreen = window.setTimeout(() => {
+          calendarRow.dataset.state = "synced";
+          phone.dataset.calendar = "synced";
+          if (manualWindowCard) manualWindowCard.hidden = true;
+          if (plannerLockable) plannerLockable.dataset.synced = "true";
+          connectedView.setAttribute("aria-hidden", "false");
+          connectedView.classList.add("active");
+          calendarAction.disabled = false;
+          renderConnectedDay();
+        }, 4200);
+
+        calendarSequenceTimeouts.push(showConnected, showSyncedScreen);
+      };
+
+      if (calendarAction) {
+        calendarAction.addEventListener("click", syncCalendar);
+      }
+
+      connectedWeekButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          if (!button.dataset.day) return;
+          activeConnectedDay = button.dataset.day;
+          manualTargetDay = activeConnectedDay;
+          closeInlineEditor();
+          renderConnectedDay();
+        });
+      });
+
+      if (connectedTimeList) {
+        connectedTimeList.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLElement)) return;
+          const row = target.closest(".connected-time-row");
+          if (!row) return;
+          const time = row.dataset.slot;
+          if (!time) return;
+          const slotId = `${activeConnectedDay}|${time}`;
+
+          if (target.classList.contains("star-button")) {
+            if (starredSlots.has(slotId)) starredSlots.delete(slotId);
+            else starredSlots.add(slotId);
+            renderConnectedDay();
+            return;
+          }
+
+          if (target.classList.contains("remove-button")) {
+            connectedDayData[activeConnectedDay].slots = connectedDayData[activeConnectedDay].slots.filter((slot) => slot !== time);
+            starredSlots.delete(slotId);
+            renderConnectedDay();
+          }
+        });
+      }
+
+      if (addMoreTimeButton) {
+        addMoreTimeButton.addEventListener("click", () => {
+          const day = connectedDayData[activeConnectedDay];
+          if (!day) return;
+          manualTargetDay = activeConnectedDay;
+          openInlineEditor();
+          renderConnectedDay();
+        });
+      }
+
+      if (emptyAddManualButton) {
+        emptyAddManualButton.addEventListener("click", () => {
+          manualTargetDay = activeConnectedDay;
+          openInlineEditor();
+          renderConnectedDay();
+        });
+      }
+
+      manualOptions.forEach((button) => {
+        button.dataset.value = button.textContent || "";
+        button.addEventListener("click", () => {
+          if (!manualInlineInput) return;
+          manualInlineInput.value = button.textContent || "";
+          manualInlineInput.classList.add("filled");
+          refreshManualOptions();
+        });
+      });
+
+      if (manualInlineInput) {
+        manualInlineInput.addEventListener("input", () => {
+          manualInlineInput.classList.toggle("filled", manualInlineInput.value.trim().length > 0);
+          refreshManualOptions();
+        });
+      }
+
+      if (manualInlineConfirm) {
+        manualInlineConfirm.addEventListener("click", () => {
+          if (!manualInlineInput) return;
+          const value = manualInlineInput.value.trim();
+          if (!value) return;
+          if (!connectedDayData[manualTargetDay].slots.includes(value)) {
+            connectedDayData[manualTargetDay].slots.push(value);
+          }
+          closeInlineEditor();
+          activeConnectedDay = manualTargetDay;
+          renderConnectedDay();
+        });
+      }
+
+      if (manualInlineCancel) {
+        manualInlineCancel.addEventListener("click", () => {
+          closeInlineEditor();
+          renderConnectedDay();
         });
       }
     </script>
