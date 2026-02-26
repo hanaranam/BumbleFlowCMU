@@ -154,7 +154,7 @@
               <div class="chips">
                 <button>Coffee</button>
                 <button>Drinks</button>
-                <button>Activity</button>
+                <button>Lunch</button>
                 <button>Dinner</button>
               </div>
             </div>
@@ -166,6 +166,16 @@
           <p class="summary-subtitle">Matches prioritized for your selected time window and shared interests</p>
           <div class="cards">
             <article class="match-card first-match-card">
+              <div class="liked-transition-card" hidden>
+                <div class="liked-transition-body">
+                  <div class="liked-avatar-wrap">
+                    <img src="./assets/images/source/Lindsey.jpg" alt="Lindsey" class="liked-avatar" />
+                    <span class="liked-heart-badge" aria-hidden="true"></span>
+                  </div>
+                  <p class="liked-title">You liked Lindsey!</p>
+                  <p class="liked-subtitle">You both are available 5 days and prefer Coffee and Drinks vibe</p>
+                </div>
+              </div>
               <img
                 src="https://www.figma.com/api/mcp/asset/190cb411-37b7-4455-b4c6-d4b80113f549"
                 alt="Lindsey"
@@ -189,8 +199,8 @@
 
             <article class="match-card">
               <img
-                src="https://www.figma.com/api/mcp/asset/190cb411-37b7-4455-b4c6-d4b80113f549"
-                alt="Summer"
+                src="./assets/images/source/Ashley.jpg"
+                alt="Ashley"
                 class="match-photo"
               />
               <div class="tag-row">
@@ -199,10 +209,10 @@
               </div>
               <div class="name-row">
                 <div class="name-status">
-                  <h3>Summer, 27</h3>
+                  <h3>Ashley, 33</h3>
                   <img class="name-verified" src="https://www.figma.com/api/mcp/asset/6f660842-1b2c-48cb-ab56-17da5297978c" alt="" />
                 </div>
-                <button class="name-heart-button" type="button" aria-label="Like Summer">
+                <button class="name-heart-button" type="button" aria-label="Like Ashley">
                   <img class="name-heart" src="https://www.figma.com/api/mcp/asset/8700bc18-5913-4cdf-bd59-15f562819621" alt="" />
                 </button>
               </div>
@@ -277,7 +287,7 @@
           <span class="opening-arrow" aria-hidden="true"></span>
         </article>
 
-        <button class="chat-history-item open-lindsey-chat" type="button">
+        <button class="chat-history-item open-lindsey-chat" type="button" hidden>
           <span class="chat-avatar-wrap"><span class="chat-avatar"></span></span>
           <span class="chat-history-copy">
             <strong>Lindsey</strong>
@@ -312,12 +322,26 @@
             <h4>No direct overlaps — but we found good options.</h4>
             <p>Times tailored to your shared vibe and availability.</p>
             <div class="time-options-grid">
-              <button type="button">9:30 - 10:30AM</button>
-              <button type="button">11:00 AM - 12:00 PM</button>
-              <button type="button">12:30 - 1:30 PM</button>
-              <button type="button">2:00 - 3:00 PM</button>
+              <button type="button" class="time-option-button" data-duration-hours="1">9:30 - 10:30AM</button>
+              <button type="button" class="time-option-button" data-duration-hours="1">11:00 AM - 12:00 PM</button>
+              <button type="button" class="time-option-button" data-duration-hours="1">12:30 - 1:30 PM</button>
+              <button type="button" class="time-option-button" data-duration-hours="1">2:00 - 3:00 PM</button>
+              <button type="button" class="time-option-button long-slot" data-duration-hours="2">7:00 - 9:00 PM</button>
             </div>
-            <a href="#">Look at more times ›</a>
+            <div class="adjust-duration-panel" hidden>
+              <div class="adjust-duration-head">
+                <p class="adjust-duration-title">Adjust Duration</p>
+                <button class="adjust-duration-close" type="button" aria-label="Close adjust duration">×</button>
+              </div>
+              <div class="adjust-duration-options"></div>
+            </div>
+            <button class="send-suggestion-button" type="button" hidden>Send suggestion</button>
+            <a href="#" class="look-more-times-link">Look at more times ›</a>
+          </article>
+
+          <article class="sent-suggestion-message" hidden>
+            <p class="sent-suggestion-title">You Suggested a Meetup Request</p>
+            <div class="sent-suggestion-list"></div>
           </article>
         </div>
 
@@ -327,6 +351,82 @@
             <input type="text" value="Aa" aria-label="Message input" />
             <button class="thread-icon gif" type="button" aria-label="Open GIF picker"></button>
           </div>
+        </div>
+      </section>
+
+      <section class="mutual-availability-overlay" aria-hidden="true">
+        <div class="mutual-availability-head">
+          <button class="mutual-availability-back" type="button" aria-label="Back to chat"></button>
+          <h2>Mutual availability</h2>
+          <div class="mutual-view-toggle" aria-hidden="true">
+            <span class="toggle-calendar active"></span>
+            <span class="toggle-list"></span>
+          </div>
+        </div>
+
+        <p class="mutual-availability-subtitle">
+          Here are your shared free times this week. Pick the times you’d like to suggest.
+        </p>
+
+        <h3 class="mutual-week-title">Feb 2026 — Week 4</h3>
+
+        <div class="mutual-calendar-head">
+          <div class="mutual-timezone">EST</div>
+          <div class="mutual-day-row">
+            <span class="active">MON</span>
+            <span>TUE</span>
+            <span>WED</span>
+            <span>THU</span>
+            <span>FRI</span>
+            <span>SAT</span>
+            <span>SUN</span>
+          </div>
+          <div class="mutual-date-row">
+            <span class="active">22</span>
+            <span>23</span>
+            <span>24</span>
+            <span>25</span>
+            <span>26</span>
+            <span>27</span>
+            <span>28</span>
+          </div>
+        </div>
+
+        <div class="mutual-calendar-body">
+          <div class="mutual-time-column">
+            <span>8 AM</span>
+            <span>9 AM</span>
+            <span>10 AM</span>
+            <span>11 AM</span>
+            <span>12 PM</span>
+            <span>1 PM</span>
+            <span>2 PM</span>
+            <span>3 PM</span>
+            <span>4 PM</span>
+            <span>5 PM</span>
+            <span>6 PM</span>
+            <span>7 PM</span>
+            <span>8 PM</span>
+            <span>9 PM</span>
+          </div>
+          <div class="mutual-grid" aria-hidden="true">
+            <span class="mutual-slot r2 c2"></span>
+            <span class="mutual-slot r3 c1"></span>
+            <span class="mutual-slot r2 c4 h2 w2"></span>
+            <span class="mutual-slot r6 c1"></span>
+            <span class="mutual-slot r7 c4 w2"></span>
+            <span class="mutual-slot r8 c6 h4"></span>
+            <span class="mutual-slot r10 c2 h2"></span>
+            <span class="mutual-slot r11 c4 h2 w2"></span>
+            <span class="mutual-slot r13 c1 h2"></span>
+            <span class="mutual-slot r13 c4 h2 w3"></span>
+            <span class="mutual-slot selected r4 c2"></span>
+          </div>
+        </div>
+
+        <div class="mutual-legend">
+          <span><i class="legend-both"></i>Both Free</span>
+          <span><i class="legend-selected"></i>Selected times</span>
         </div>
       </section>
 
@@ -505,11 +605,14 @@
       const activeVariant = pageToVariant[page] || "discover";
       const phone = document.querySelector(".phone");
       const navVariants = document.querySelectorAll(".nav-variant");
+      const navItems = document.querySelectorAll(".nav-item");
       const unlockButton = document.querySelector(".unlock-overlay");
       const paywall = document.querySelector(".paywall");
       const paywallClose = document.querySelector(".paywall-close");
       const paywallCta = document.querySelector(".paywall-cta");
       const firstCardHeart = document.querySelector(".first-card-heart");
+      const firstMatchCard = document.querySelector(".first-match-card");
+      const likedTransitionCard = document.querySelector(".liked-transition-card");
       const matchFlowOverlay = document.querySelector(".match-flow-overlay");
       const matchFinalStage = document.querySelector(".stage-match");
       const matchFlowClose = document.querySelector(".match-flow-close");
@@ -517,6 +620,9 @@
       const openLindseyChatButton = document.querySelector(".open-lindsey-chat");
       const chatThreadOverlay = document.querySelector(".chat-thread-overlay");
       const chatThreadBack = document.querySelector(".chat-thread-back");
+      const lookMoreTimesLink = document.querySelector(".look-more-times-link");
+      const mutualAvailabilityOverlay = document.querySelector(".mutual-availability-overlay");
+      const mutualAvailabilityBack = document.querySelector(".mutual-availability-back");
       const weekButtons = document.querySelectorAll(".day");
       const vibeButtons = document.querySelectorAll(".chips button");
       const planCards = document.querySelectorAll(".plan-card");
@@ -538,6 +644,14 @@
       const addMoreTimeButton = document.querySelector(".add-more-time");
       const emptyAddManualButton = document.querySelector(".empty-add-manual");
       const manualOptions = document.querySelectorAll(".manual-option");
+      const timeOptionButtons = document.querySelectorAll(".time-option-button");
+      const adjustDurationPanel = document.querySelector(".adjust-duration-panel");
+      const adjustDurationClose = document.querySelector(".adjust-duration-close");
+      const adjustDurationOptions = document.querySelector(".adjust-duration-options");
+      const sendSuggestionButton = document.querySelector(".send-suggestion-button");
+      const scheduleOptionsCard = document.querySelector(".schedule-options-card");
+      const sentSuggestionMessage = document.querySelector(".sent-suggestion-message");
+      const sentSuggestionList = document.querySelector(".sent-suggestion-list");
       const normalizeWindow = (value) => value.replace(/\s+/g, " ").trim().toLowerCase();
       let calendarSequenceTimeouts = [];
       const initialConnectedDayData = {
@@ -556,6 +670,31 @@
       let inlineEditorVisible = false;
       let matchFlowTimeouts = [];
       let chatThreadCloseTimeout = null;
+      let likeTransitionTimeout = null;
+      let hasMatched = false;
+      const selectedTimeSlots = new Set();
+      const navIconSrc = {
+        profile: {
+          filled: "./assets/icons/Property 1=Person Filled.svg",
+          outline: "./assets/icons/Property 1=Person Not Filled.svg",
+        },
+        discover: {
+          filled: "./assets/icons/Property 1=Discover Filled.svg",
+          outline: "./assets/icons/Property 1=Discover Not Filled.svg",
+        },
+        people: {
+          filled: "./assets/icons/Property 1=Bumble Filled.svg",
+          outline: "./assets/icons/Property 1=Bumble Not Filled.svg",
+        },
+        liked: {
+          filled: "./assets/icons/Property 1=Heart Filled.svg",
+          outline: "./assets/icons/Property 1=Heart Not Filled.svg",
+        },
+        chats: {
+          filled: "./assets/icons/Property 1=Chat Filled.svg",
+          outline: "./assets/icons/Property 1=Chat Not Filled.svg",
+        },
+      };
 
       const toDataUri = (svg) => `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
       const svgIcons = {
@@ -590,21 +729,13 @@
         iconFallback: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect x="3.2" y="3.2" width="17.6" height="17.6" rx="4" fill="none" stroke="#111" stroke-width="1.6"/><circle cx="9" cy="9.2" r="1.8" fill="#111"/><path d="M6.8 16.8L10.4 13.2L13 15.6L16.6 12L17.2 16.8Z" fill="#111"/></svg>`,
       };
 
-      const navIconKindByTarget = {
-        profile: "navPerson",
-        discover: "navDiscover",
-        people: "navBumble",
-        liked: "navHeart",
-        chats: "navChat",
-      };
-
       const applyStatusBarIcons = () => {
         const cell = document.querySelector(".status-cell");
         const wifi = document.querySelector(".status-wifi");
         const battery = document.querySelector(".status-battery");
-        if (cell) cell.src = toDataUri(svgIcons.statusCell);
-        if (wifi) wifi.src = toDataUri(svgIcons.statusWifi);
-        if (battery) battery.src = toDataUri(svgIcons.statusBattery);
+        if (cell) cell.src = "./assets/icons/Cellular Connection.svg";
+        if (wifi) wifi.src = "./assets/icons/Wifi.svg";
+        if (battery) battery.src = "./assets/icons/Battery.svg";
       };
 
       const applyCalendarIcons = () => {
@@ -618,21 +749,24 @@
           const icon = item.querySelector("img");
           if (!icon) return;
           const target = item.dataset.pageTarget;
-          const iconKind = target ? navIconKindByTarget[target] : null;
-          if (!iconKind) return;
-          const iconSet = svgIcons[iconKind];
+          const iconSet = target ? navIconSrc[target] : null;
+          if (!iconSet) return;
           const iconState = item.classList.contains("active") ? "filled" : "outline";
-          icon.src = toDataUri(iconSet[iconState]);
+          icon.src = iconSet[iconState];
         });
       };
 
       const applySummaryIcons = () => {
         document.querySelectorAll(".name-heart").forEach((icon) => {
-          icon.src = toDataUri(svgIcons.summaryHeart);
+          icon.src = "./assets/icons/Property 1=Heart Not Filled.svg";
         });
         document.querySelectorAll(".name-verified").forEach((icon) => {
-          icon.src = toDataUri(svgIcons.verified);
+          icon.src = "./assets/icons/Property 1=Verified.svg";
         });
+      };
+
+      const updateChatHistoryMatchState = () => {
+        if (openLindseyChatButton) openLindseyChatButton.hidden = !hasMatched;
       };
 
       const applyFigmaImageFallbacks = () => {
@@ -676,6 +810,31 @@
         chatHistoryOverlay.setAttribute("aria-hidden", "false");
       };
 
+      const closeChatHistory = () => {
+        if (!chatHistoryOverlay) return;
+        chatHistoryOverlay.classList.remove("open");
+        chatHistoryOverlay.setAttribute("aria-hidden", "true");
+      };
+
+      const openMutualAvailability = () => {
+        if (!mutualAvailabilityOverlay || !phone) return;
+        mutualAvailabilityOverlay.classList.remove("closing");
+        mutualAvailabilityOverlay.classList.add("open");
+        mutualAvailabilityOverlay.setAttribute("aria-hidden", "false");
+        phone.classList.add("mutual-availability-open");
+      };
+
+      const closeMutualAvailability = () => {
+        if (!mutualAvailabilityOverlay || !phone) return;
+        mutualAvailabilityOverlay.classList.add("closing");
+        window.setTimeout(() => {
+          if (!mutualAvailabilityOverlay || !phone) return;
+          mutualAvailabilityOverlay.classList.remove("open", "closing");
+          mutualAvailabilityOverlay.setAttribute("aria-hidden", "true");
+          phone.classList.remove("mutual-availability-open");
+        }, 280);
+      };
+
       const closeChatThread = () => {
         if (!chatThreadOverlay || !phone) return;
         if (chatThreadCloseTimeout) window.clearTimeout(chatThreadCloseTimeout);
@@ -708,20 +867,18 @@
         matchFlowOverlay.setAttribute("aria-hidden", "false");
         matchFinalStage.hidden = false;
         if (phone) phone.classList.add("matching-open");
+        hasMatched = true;
+        updateChatHistoryMatchState();
       };
 
       const closeMatchFlowToChats = () => {
-        if (!matchFlowOverlay) return;
+        if (!matchFlowOverlay || !phone) return;
         clearMatchFlowTimeouts();
-        matchFlowOverlay.classList.add("closing");
-        const closeAndOpenChats = window.setTimeout(() => {
-          matchFlowOverlay.classList.remove("open", "closing");
-          matchFlowOverlay.setAttribute("aria-hidden", "true");
-          if (matchFinalStage) matchFinalStage.hidden = true;
-          if (phone) phone.classList.remove("matching-open");
-          openChatHistory();
-        }, 300);
-        matchFlowTimeouts.push(closeAndOpenChats);
+        matchFlowOverlay.classList.remove("open", "closing");
+        matchFlowOverlay.setAttribute("aria-hidden", "true");
+        if (matchFinalStage) matchFinalStage.hidden = true;
+        phone.classList.remove("matching-open");
+        openChatHistory();
       };
 
       const resetConnectedDayData = () => {
@@ -861,8 +1018,37 @@
       applyStatusBarIcons();
       applyCalendarIcons();
       applySummaryIcons();
+      updateChatHistoryMatchState();
       setActiveVariantUi(activeVariant);
       applyFigmaImageFallbacks();
+
+      navItems.forEach((item) => {
+        item.addEventListener("click", (event) => {
+          const target = item.dataset.pageTarget;
+          if (!target || !phone) return;
+          if (target === "discover") {
+            event.preventDefault();
+            phone.dataset.page = "discover";
+            closeChatHistory();
+            if (chatThreadOverlay) {
+              chatThreadOverlay.classList.remove("open", "closing");
+              chatThreadOverlay.setAttribute("aria-hidden", "true");
+            }
+            if (mutualAvailabilityOverlay) {
+              mutualAvailabilityOverlay.classList.remove("open", "closing");
+              mutualAvailabilityOverlay.setAttribute("aria-hidden", "true");
+            }
+            phone.classList.remove("chat-thread-open");
+            phone.classList.remove("mutual-availability-open");
+            setActiveVariantUi("discover");
+            return;
+          }
+          if (target === "chats") {
+            event.preventDefault();
+            openChatHistory();
+          }
+        });
+      });
 
       weekButtons.forEach((button) => {
         button.addEventListener("click", () => button.classList.toggle("active"));
@@ -910,7 +1096,19 @@
             openPaywall();
             return;
           }
-          openMatchFlow();
+          if (likeTransitionTimeout) {
+            window.clearTimeout(likeTransitionTimeout);
+            likeTransitionTimeout = null;
+          }
+          if (firstMatchCard) firstMatchCard.classList.add("liked-state");
+          if (likedTransitionCard) likedTransitionCard.hidden = false;
+
+          likeTransitionTimeout = window.setTimeout(() => {
+            if (firstMatchCard) firstMatchCard.classList.remove("liked-state");
+            if (likedTransitionCard) likedTransitionCard.hidden = true;
+            openMatchFlow();
+            likeTransitionTimeout = null;
+          }, 1600);
         });
       }
 
@@ -924,6 +1122,17 @@
 
       if (chatThreadBack) {
         chatThreadBack.addEventListener("click", closeChatThread);
+      }
+
+      if (lookMoreTimesLink) {
+        lookMoreTimesLink.addEventListener("click", (event) => {
+          event.preventDefault();
+          openMutualAvailability();
+        });
+      }
+
+      if (mutualAvailabilityBack) {
+        mutualAvailabilityBack.addEventListener("click", closeMutualAvailability);
       }
 
       const clearCalendarTimeouts = () => {
@@ -1052,6 +1261,175 @@
           renderConnectedDay();
         });
       }
+
+      const formatDurationLabel = (value) => (Number.isInteger(value) ? `${value}h` : `${value.toFixed(1)}h`);
+      const formatDurationBlockLabel = (value) => (value === 1 ? "1 hour block" : `${value} hour block`);
+
+      const parseTimeToMinutes = (timeText, fallbackMeridiem = "PM") => {
+        const match = timeText.trim().toUpperCase().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/);
+        if (!match) return null;
+        const hour12 = Number(match[1]);
+        const minute = Number(match[2]);
+        const meridiem = match[3] || fallbackMeridiem;
+        let hour24 = hour12 % 12;
+        if (meridiem === "PM") hour24 += 12;
+        return hour24 * 60 + minute;
+      };
+
+      const formatMinutesToTime = (minutes, includeMeridiem = true) => {
+        const normalized = ((minutes % (24 * 60)) + 24 * 60) % (24 * 60);
+        const hour24 = Math.floor(normalized / 60);
+        const minute = normalized % 60;
+        const meridiem = hour24 >= 12 ? "PM" : "AM";
+        const hour12 = hour24 % 12 || 12;
+        const minuteText = String(minute).padStart(2, "0");
+        return includeMeridiem ? `${hour12}:${minuteText} ${meridiem}` : `${hour12}:${minuteText}`;
+      };
+
+      const getRangeParts = (labelText) => {
+        const [startRaw = "", endRaw = ""] = labelText.split("-").map((part) => part.trim());
+        const endMeridiemMatch = endRaw.toUpperCase().match(/(AM|PM)$/);
+        const startMeridiemMatch = startRaw.toUpperCase().match(/(AM|PM)$/);
+        const endMeridiem = endMeridiemMatch ? endMeridiemMatch[1] : "PM";
+        const startHasMeridiem = Boolean(startMeridiemMatch);
+        const startMinutes = parseTimeToMinutes(startRaw, endMeridiem);
+        const startText = startRaw.replace(/\s*(AM|PM)$/i, "").trim();
+        return { startMinutes, startText, startHasMeridiem, endMeridiem };
+      };
+
+      const updateLongSlotLabel = (button, durationHours) => {
+        if (!button.dataset.originalLabel) button.dataset.originalLabel = button.textContent.trim();
+        const { startMinutes, startText, startHasMeridiem, endMeridiem } = getRangeParts(button.dataset.originalLabel);
+        if (startMinutes === null) return;
+        const newEnd = startMinutes + durationHours * 60;
+        const startDisplay = startHasMeridiem ? formatMinutesToTime(startMinutes, true) : startText;
+        const endDisplay = formatMinutesToTime(newEnd, true);
+        button.textContent = `${startDisplay} - ${endDisplay}`;
+        button.dataset.selectedDurationHours = String(durationHours);
+      };
+
+      const showAdjustDuration = (maxHours) => {
+        if (!adjustDurationPanel || !adjustDurationOptions) return;
+        if (maxHours <= 1) {
+          adjustDurationPanel.hidden = true;
+          adjustDurationOptions.innerHTML = "";
+          return;
+        }
+
+        const options = [];
+        for (let duration = 1; duration <= maxHours; duration += 0.5) {
+          options.push(Number(duration.toFixed(1)));
+        }
+
+        adjustDurationOptions.innerHTML = options
+          .map(
+            (duration, index) => `
+              <button type="button" class="duration-option-button ${index === options.length - 1 ? "active" : ""}" data-duration="${duration}">
+                ${formatDurationLabel(duration)}
+              </button>
+            `
+          )
+          .join("");
+        adjustDurationPanel.hidden = false;
+      };
+
+      const updateSendSuggestionState = () => {
+        if (!sendSuggestionButton) return;
+        const selectedCount = selectedTimeSlots.size;
+        sendSuggestionButton.hidden = selectedCount === 0;
+        sendSuggestionButton.textContent = selectedCount > 1 ? `Send suggestion (${selectedCount})` : "Send suggestion";
+      };
+
+      const updateAdjustDurationState = () => {
+        const selectedLongSlots = Array.from(selectedTimeSlots).filter(
+          (slot) => Number(slot.dataset.durationHours || "1") > 1
+        );
+        if (selectedLongSlots.length === 0) {
+          if (adjustDurationPanel) adjustDurationPanel.hidden = true;
+          if (adjustDurationOptions) adjustDurationOptions.innerHTML = "";
+          return;
+        }
+        const longestSlot = selectedLongSlots.reduce((max, slot) => Math.max(max, Number(slot.dataset.durationHours || "1")), 1);
+        showAdjustDuration(longestSlot);
+      };
+
+      timeOptionButtons.forEach((button) => {
+        button.dataset.originalLabel = button.textContent.trim();
+        button.dataset.selectedDurationHours = button.dataset.durationHours || "1";
+        button.addEventListener("click", () => {
+          const isSelected = button.classList.toggle("active");
+          if (isSelected) selectedTimeSlots.add(button);
+          else {
+            selectedTimeSlots.delete(button);
+            if (button.classList.contains("long-slot")) {
+              button.textContent = button.dataset.originalLabel || button.textContent;
+              button.dataset.selectedDurationHours = button.dataset.durationHours || "1";
+            }
+          }
+          updateSendSuggestionState();
+          updateAdjustDurationState();
+        });
+      });
+
+      if (adjustDurationClose) {
+        adjustDurationClose.addEventListener("click", () => {
+          if (adjustDurationPanel) adjustDurationPanel.hidden = true;
+        });
+      }
+
+      if (adjustDurationOptions) {
+        adjustDurationOptions.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLElement) || !target.classList.contains("duration-option-button")) return;
+          adjustDurationOptions.querySelectorAll(".duration-option-button").forEach((button) => button.classList.remove("active"));
+          target.classList.add("active");
+          const selectedDuration = Number(target.dataset.duration || "1");
+          selectedTimeSlots.forEach((slotButton) => {
+            if (!slotButton.classList.contains("long-slot")) return;
+            updateLongSlotLabel(slotButton, selectedDuration);
+          });
+        });
+      }
+
+      const sendSuggestionsToThread = (items) => {
+        if (!sentSuggestionMessage || !sentSuggestionList || !scheduleOptionsCard || items.length === 0) return;
+        sentSuggestionList.innerHTML = items
+          .map(
+            ({ day = "Monday", label, duration = 1 }) => `
+              <div class="sent-suggestion-item">
+                <p class="sent-suggestion-item-title">${day}, ${label}</p>
+                <p class="sent-suggestion-item-subtitle">${formatDurationBlockLabel(duration)}</p>
+              </div>
+            `
+          )
+          .join("");
+        scheduleOptionsCard.hidden = true;
+        sentSuggestionMessage.hidden = false;
+      };
+
+      if (sendSuggestionButton) {
+        sendSuggestionButton.addEventListener("click", () => {
+          if (selectedTimeSlots.size === 0) return;
+          const selectedInOrder = Array.from(timeOptionButtons).filter((button) => selectedTimeSlots.has(button));
+          const payload = selectedInOrder
+            .map((button) => {
+              const duration = Number(button.dataset.selectedDurationHours || button.dataset.durationHours || "1");
+              return { day: "Monday", label: button.textContent.trim(), duration };
+            });
+          sendSuggestionsToThread(payload);
+          selectedTimeSlots.clear();
+          timeOptionButtons.forEach((button) => {
+            button.classList.remove("active");
+            button.textContent = button.dataset.originalLabel || button.textContent;
+            button.dataset.selectedDurationHours = button.dataset.durationHours || "1";
+          });
+          if (adjustDurationPanel) adjustDurationPanel.hidden = true;
+          if (adjustDurationOptions) adjustDurationOptions.innerHTML = "";
+          updateSendSuggestionState();
+        });
+      }
+
+      updateSendSuggestionState();
     </script>
   </body>
 </html>
