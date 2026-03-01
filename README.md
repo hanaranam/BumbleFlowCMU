@@ -1,6 +1,21 @@
 # BumbleFlow
 Bumble Flow – Vibe Coded Prototype (Iteration 2)
 
+## Next.js Setup
+This project is now structured as a Next.js app while preserving the same UI and behavior.
+
+Key files:
+- `app/page.js`: loads the prototype UI
+- `app/layout.js`: root layout
+- `app/globals.css`: migrated styles
+- `src/templates/bumbleflow-main.html`: migrated UI markup
+- `src/lib/initializeBumbleFlow.js`: migrated interaction logic
+- `public/assets`: static assets used by the UI
+
+Run locally:
+1. `npm install`
+2. `npm run dev`
+
 Overview
 Bumble Flow is a scheduling-aware matching layer designed to reduce friction between intent and action. Instead of passive matching, Flow activates during time windows when users are actively available to meet.
 
