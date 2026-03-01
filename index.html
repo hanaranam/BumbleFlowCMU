@@ -409,19 +409,7 @@
             <span>8 PM</span>
             <span>9 PM</span>
           </div>
-          <div class="mutual-grid" aria-hidden="true">
-            <span class="mutual-slot r2 c2"></span>
-            <span class="mutual-slot r3 c1"></span>
-            <span class="mutual-slot r2 c4 h2 w2"></span>
-            <span class="mutual-slot r6 c1"></span>
-            <span class="mutual-slot r7 c4 w2"></span>
-            <span class="mutual-slot r8 c6 h4"></span>
-            <span class="mutual-slot r10 c2 h2"></span>
-            <span class="mutual-slot r11 c4 h2 w2"></span>
-            <span class="mutual-slot r13 c1 h2"></span>
-            <span class="mutual-slot r13 c4 h2 w3"></span>
-            <span class="mutual-slot selected r4 c2"></span>
-          </div>
+          <div class="mutual-grid" aria-hidden="true"></div>
         </div>
 
         <div class="mutual-legend">
@@ -637,6 +625,7 @@
       const connectedTimelineColumn = document.querySelector(".connected-timeline-column");
       const connectedTimeList = document.querySelector(".connected-time-list");
       const connectedEmptyState = document.querySelector(".connected-empty-state");
+      const mutualGrid = document.querySelector(".mutual-grid");
       const manualInlineWrap = document.querySelector(".manual-window-inline");
       const manualInlineInput = document.querySelector(".manual-inline-input");
       const manualInlineConfirm = document.querySelector(".manual-inline-confirm");
@@ -644,12 +633,14 @@
       const addMoreTimeButton = document.querySelector(".add-more-time");
       const emptyAddManualButton = document.querySelector(".empty-add-manual");
       const manualOptions = document.querySelectorAll(".manual-option");
-      const timeOptionButtons = document.querySelectorAll(".time-option-button");
+      const timeOptionsGrid = document.querySelector(".time-options-grid");
       const adjustDurationPanel = document.querySelector(".adjust-duration-panel");
       const adjustDurationClose = document.querySelector(".adjust-duration-close");
       const adjustDurationOptions = document.querySelector(".adjust-duration-options");
       const sendSuggestionButton = document.querySelector(".send-suggestion-button");
       const scheduleOptionsCard = document.querySelector(".schedule-options-card");
+      const scheduleOptionsTitle = document.querySelector(".schedule-options-card h4");
+      const scheduleOptionsSubtitle = document.querySelector(".schedule-options-card > p");
       const sentSuggestionMessage = document.querySelector(".sent-suggestion-message");
       const sentSuggestionList = document.querySelector(".sent-suggestion-list");
       const normalizeWindow = (value) => value.replace(/\s+/g, " ").trim().toLowerCase();
@@ -663,6 +654,20 @@
         s: { label: "Saturday", slots: ["10:00 AM - 11:30 AM", "1:00 - 3:00 PM", "7:30 - 9:00 PM"] },
         su: { label: "Sunday", slots: [] },
       };
+      const lindseyMockSchedule = {
+        m: ["8:00 - 9:00 AM", "11:30 AM - 1:00 PM", "3:00 - 4:00 PM", "7:30 - 9:00 PM"],
+        t: ["9:00 - 10:30 AM", "12:30 - 2:00 PM", "6:30 - 8:30 PM"],
+        w: ["8:00 - 9:00 AM", "12:00 - 2:00 PM", "6:00 - 7:30 PM"],
+        th: ["8:30 - 10:30 AM", "4:30 - 6:00 PM"],
+        f: ["10:30 AM - 12:30 PM", "8:00 - 10:00 PM"],
+        s: ["9:00 - 10:00 AM", "2:00 - 4:00 PM", "7:00 - 8:30 PM"],
+        su: ["11:00 AM - 1:00 PM", "5:00 - 7:00 PM"],
+      };
+      const mutualDayOrder = ["m", "t", "w", "th", "f", "s", "su"];
+      const MUTUAL_GRID_START_MINUTES = 8 * 60;
+      const MUTUAL_GRID_END_MINUTES = 22 * 60;
+      const MUTUAL_GRID_STEP_MINUTES = 30;
+      const CHAT_SUGGESTION_DAY_KEY = "m";
       let connectedDayData = JSON.parse(JSON.stringify(initialConnectedDayData));
       let activeConnectedDay = "m";
       const starredSlots = new Set();
@@ -816,8 +821,184 @@
         chatHistoryOverlay.setAttribute("aria-hidden", "true");
       };
 
+      const parseScheduleClock = (value, fallbackMeridiem = "") => {
+        const match = value.trim().match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)?$/i);
+        if (!match) return null;
+        const rawHour = Number(match[1]);
+        const minute = Number(match[2] || "0");
+        const meridiem = (match[3] || fallbackMeridiem || "").toUpperCase();
+        if (!["AM", "PM"].includes(meridiem)) return null;
+        let hour24 = rawHour % 12;
+        if (meridiem === "PM") hour24 += 12;
+        return hour24 * 60 + minute;
+      };
+
+      const parseScheduleRange = (value) => {
+        const normalized = value.replace(/[–—]/g, "-").replace(/\s+/g, " ").trim();
+        const [rawStart = "", rawEnd = ""] = normalized.split(/\s*-\s*/);
+        if (!rawStart || !rawEnd) return null;
+        const endMeridiem = (rawEnd.match(/(AM|PM)/i) || [])[1] || "";
+        const startMeridiem = (rawStart.match(/(AM|PM)/i) || [])[1] || endMeridiem;
+        const start = parseScheduleClock(rawStart, startMeridiem);
+        const end = parseScheduleClock(rawEnd, endMeridiem || startMeridiem);
+        if (start === null || end === null || end <= start) return null;
+        return [start, end];
+      };
+
+      const mergeIntervals = (intervals) => {
+        if (intervals.length === 0) return [];
+        const sorted = intervals
+          .map(([start, end]) => [start, end])
+          .sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+        const merged = [sorted[0]];
+        for (let i = 1; i < sorted.length; i += 1) {
+          const [start, end] = sorted[i];
+          const current = merged[merged.length - 1];
+          if (start <= current[1]) current[1] = Math.max(current[1], end);
+          else merged.push([start, end]);
+        }
+        return merged;
+      };
+
+      const getMutualAvailabilityByDay = () => {
+        const mutual = {};
+        mutualDayOrder.forEach((dayKey) => {
+          const kevinSlots = connectedDayData[dayKey]?.slots || [];
+          const lindseySlots = lindseyMockSchedule[dayKey] || [];
+          const overlaps = [];
+          kevinSlots.forEach((kevinSlot) => {
+            const kevinRange = parseScheduleRange(kevinSlot);
+            if (!kevinRange) return;
+            lindseySlots.forEach((lindseySlot) => {
+              const lindseyRange = parseScheduleRange(lindseySlot);
+              if (!lindseyRange) return;
+              const start = Math.max(kevinRange[0], lindseyRange[0]);
+              const end = Math.min(kevinRange[1], lindseyRange[1]);
+              if (end > start) overlaps.push([start, end]);
+            });
+          });
+          mutual[dayKey] = mergeIntervals(overlaps);
+        });
+        return mutual;
+      };
+
+      const formatDurationHours = (hours) => {
+        if (Math.abs(hours - Math.round(hours)) < 0.001) return `${Math.round(hours)}H FREE`;
+        return `${hours.toFixed(1)}H FREE`;
+      };
+
+      const getSlotDurationHours = (label) => {
+        const range = parseScheduleRange(label);
+        if (!range) return 1;
+        return Math.max(0.5, (range[1] - range[0]) / 60);
+      };
+
+      const formatRangeLabel = (startMinutes, endMinutes) =>
+        `${formatMinutesToTime(startMinutes, true)} - ${formatMinutesToTime(endMinutes, true)}`;
+
+      const sortDaySlotsChronologically = (dayKey) => {
+        const day = connectedDayData[dayKey];
+        if (!day) return;
+        day.slots.sort((left, right) => {
+          const leftRange = parseScheduleRange(left);
+          const rightRange = parseScheduleRange(right);
+          if (!leftRange && !rightRange) return left.localeCompare(right);
+          if (!leftRange) return 1;
+          if (!rightRange) return -1;
+          return leftRange[0] - rightRange[0] || leftRange[1] - rightRange[1];
+        });
+      };
+
+      const getCurrentChatSuggestionDayKey = () => CHAT_SUGGESTION_DAY_KEY;
+
+      const getTimeOptionButtons = () => {
+        if (!timeOptionsGrid) return [];
+        return Array.from(timeOptionsGrid.querySelectorAll(".time-option-button"));
+      };
+
+      const renderChatSuggestions = () => {
+        if (!timeOptionsGrid) return;
+        const dayKey = getCurrentChatSuggestionDayKey();
+        const dayLabel = connectedDayData[dayKey]?.label || "Monday";
+        const mutualIntervals = getMutualAvailabilityByDay()[dayKey] || [];
+
+        if (scheduleOptionsTitle) {
+          scheduleOptionsTitle.textContent =
+            mutualIntervals.length > 0 ? `${dayLabel} mutual availability` : `No mutual availability for ${dayLabel}`;
+        }
+        if (scheduleOptionsSubtitle) {
+          scheduleOptionsSubtitle.textContent =
+            mutualIntervals.length > 0
+              ? "Today’s suggestions are synced with both calendars."
+              : "Try adding more times in Discover to find overlap.";
+        }
+
+        selectedTimeSlots.clear();
+        if (adjustDurationPanel) adjustDurationPanel.hidden = true;
+        if (adjustDurationOptions) adjustDurationOptions.innerHTML = "";
+
+        if (mutualIntervals.length === 0) {
+          timeOptionsGrid.innerHTML = "";
+          updateSendSuggestionState();
+          return;
+        }
+
+        timeOptionsGrid.innerHTML = mutualIntervals
+          .map(([start, end]) => {
+            const durationHours = Math.max(0.5, (end - start) / 60);
+            const isLong = durationHours > 1;
+            return `
+              <button type="button" class="time-option-button ${isLong ? "long-slot" : ""}" data-duration-hours="${durationHours}" data-day-key="${dayKey}" data-day-label="${dayLabel}">
+                ${formatRangeLabel(start, end)}
+              </button>
+            `;
+          })
+          .join("");
+
+        getTimeOptionButtons().forEach((button) => {
+          button.dataset.originalLabel = button.textContent.trim();
+          button.dataset.selectedDurationHours = button.dataset.durationHours || "1";
+        });
+
+        updateSendSuggestionState();
+      };
+
+      const refreshChatSuggestionsIfVisible = () => {
+        if (!chatThreadOverlay || !chatThreadOverlay.classList.contains("open")) return;
+        if (sentSuggestionMessage && !sentSuggestionMessage.hidden) return;
+        renderChatSuggestions();
+      };
+
+      const renderMutualAvailabilityCalendar = () => {
+        if (!mutualGrid) return;
+        const mutualByDay = getMutualAvailabilityByDay();
+        mutualGrid.innerHTML = "";
+
+        mutualDayOrder.forEach((dayKey, dayIndex) => {
+          const intervals = mutualByDay[dayKey] || [];
+          intervals.forEach(([rawStart, rawEnd]) => {
+            const clampedStart = Math.max(rawStart, MUTUAL_GRID_START_MINUTES);
+            const clampedEnd = Math.min(rawEnd, MUTUAL_GRID_END_MINUTES);
+            if (clampedEnd <= clampedStart) return;
+            const startUnits = (clampedStart - MUTUAL_GRID_START_MINUTES) / MUTUAL_GRID_STEP_MINUTES;
+            const spanUnits = (clampedEnd - clampedStart) / MUTUAL_GRID_STEP_MINUTES;
+            const slot = document.createElement("span");
+            slot.className = "mutual-slot";
+            slot.style.gridColumn = String(dayIndex + 1);
+            slot.style.gridRow = `${Math.floor(startUnits) + 1} / span ${Math.max(1, Math.round(spanUnits))}`;
+            mutualGrid.appendChild(slot);
+          });
+        });
+      };
+
+      const refreshMutualAvailabilityIfOpen = () => {
+        if (!mutualAvailabilityOverlay || !mutualAvailabilityOverlay.classList.contains("open")) return;
+        renderMutualAvailabilityCalendar();
+      };
+
       const openMutualAvailability = () => {
         if (!mutualAvailabilityOverlay || !phone) return;
+        renderMutualAvailabilityCalendar();
         mutualAvailabilityOverlay.classList.remove("closing");
         mutualAvailabilityOverlay.classList.add("open");
         mutualAvailabilityOverlay.setAttribute("aria-hidden", "false");
@@ -853,6 +1034,7 @@
           window.clearTimeout(chatThreadCloseTimeout);
           chatThreadCloseTimeout = null;
         }
+        renderChatSuggestions();
         chatThreadOverlay.classList.remove("closing");
         chatThreadOverlay.classList.add("open");
         chatThreadOverlay.setAttribute("aria-hidden", "false");
@@ -887,6 +1069,8 @@
         manualTargetDay = "w";
         starredSlots.clear();
         inlineEditorVisible = false;
+        refreshMutualAvailabilityIfOpen();
+        refreshChatSuggestionsIfVisible();
       };
 
       const openInlineEditor = () => {
@@ -945,6 +1129,7 @@
         const day = connectedDayData[activeConnectedDay];
         if (!day || !connectedDayTitle || !connectedDaySubtitle || !connectedTimeList || !connectedEmptyState || !addMoreTimeButton)
           return;
+        sortDaySlotsChronologically(activeConnectedDay);
 
         const slotCount = day.slots.length;
         connectedDayTitle.textContent = day.label;
@@ -975,11 +1160,12 @@
           .map((time) => {
             const slotId = `${activeConnectedDay}|${time}`;
             const isStarred = starredSlots.has(slotId);
+            const durationHours = getSlotDurationHours(time);
             return `
               <article class="connected-time-row ${isStarred ? "starred" : ""}" data-slot="${time}">
                 <div class="time-copy">
                   <h5>${time}</h5>
-                  <p class="time-label">1H FREE</p>
+                  <p class="time-label">${formatDurationHours(durationHours)}</p>
                 </div>
                 <div class="row-actions">
                   <button class="star-button ${isStarred ? "active" : ""}" type="button" aria-label="Favorite slot">${isStarred ? "★" : "☆"}</button>
@@ -1008,6 +1194,7 @@
         if (addMoreTimeButton) addMoreTimeButton.hidden = false;
         if (connectedEmptyState) connectedEmptyState.hidden = true;
         renderConnectedDay();
+        refreshChatSuggestionsIfVisible();
       };
 
       if (phone) {
@@ -1018,6 +1205,7 @@
       applyStatusBarIcons();
       applyCalendarIcons();
       applySummaryIcons();
+      renderMutualAvailabilityCalendar();
       updateChatHistoryMatchState();
       setActiveVariantUi(activeVariant);
       applyFigmaImageFallbacks();
@@ -1202,6 +1390,8 @@
             connectedDayData[activeConnectedDay].slots = connectedDayData[activeConnectedDay].slots.filter((slot) => slot !== time);
             starredSlots.delete(slotId);
             renderConnectedDay();
+            refreshMutualAvailabilityIfOpen();
+            refreshChatSuggestionsIfVisible();
           }
         });
       }
@@ -1248,10 +1438,13 @@
           if (!value) return;
           if (!connectedDayData[manualTargetDay].slots.includes(value)) {
             connectedDayData[manualTargetDay].slots.push(value);
+            sortDaySlotsChronologically(manualTargetDay);
           }
           closeInlineEditor();
           activeConnectedDay = manualTargetDay;
           renderConnectedDay();
+          refreshMutualAvailabilityIfOpen();
+          refreshChatSuggestionsIfVisible();
         });
       }
 
@@ -1353,10 +1546,12 @@
         showAdjustDuration(longestSlot);
       };
 
-      timeOptionButtons.forEach((button) => {
-        button.dataset.originalLabel = button.textContent.trim();
-        button.dataset.selectedDurationHours = button.dataset.durationHours || "1";
-        button.addEventListener("click", () => {
+      if (timeOptionsGrid) {
+        timeOptionsGrid.addEventListener("click", (event) => {
+          const target = event.target;
+          if (!(target instanceof HTMLElement)) return;
+          const button = target.closest(".time-option-button");
+          if (!button) return;
           const isSelected = button.classList.toggle("active");
           if (isSelected) selectedTimeSlots.add(button);
           else {
@@ -1369,7 +1564,7 @@
           updateSendSuggestionState();
           updateAdjustDurationState();
         });
-      });
+      }
 
       if (adjustDurationClose) {
         adjustDurationClose.addEventListener("click", () => {
@@ -1410,15 +1605,16 @@
       if (sendSuggestionButton) {
         sendSuggestionButton.addEventListener("click", () => {
           if (selectedTimeSlots.size === 0) return;
-          const selectedInOrder = Array.from(timeOptionButtons).filter((button) => selectedTimeSlots.has(button));
+          const selectedInOrder = getTimeOptionButtons().filter((button) => selectedTimeSlots.has(button));
           const payload = selectedInOrder
             .map((button) => {
               const duration = Number(button.dataset.selectedDurationHours || button.dataset.durationHours || "1");
-              return { day: "Monday", label: button.textContent.trim(), duration };
+              const day = button.dataset.dayLabel || "Monday";
+              return { day, label: button.textContent.trim(), duration };
             });
           sendSuggestionsToThread(payload);
           selectedTimeSlots.clear();
-          timeOptionButtons.forEach((button) => {
+          getTimeOptionButtons().forEach((button) => {
             button.classList.remove("active");
             button.textContent = button.dataset.originalLabel || button.textContent;
             button.dataset.selectedDurationHours = button.dataset.durationHours || "1";
@@ -1429,6 +1625,7 @@
         });
       }
 
+      renderChatSuggestions();
       updateSendSuggestionState();
     </script>
   </body>

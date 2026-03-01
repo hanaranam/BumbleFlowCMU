@@ -1934,11 +1934,11 @@ body {
   background-image:
     linear-gradient(to right, #cfcfcf 1px, transparent 1px),
     linear-gradient(to bottom, #cfcfcf 1px, transparent 1px);
-  background-size: calc(100% / 7) 40px;
+  background-size: calc(100% / 7) 20px;
   border: 1px solid #cfcfcf;
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  grid-template-rows: repeat(14, 40px);
+  grid-template-rows: repeat(28, 20px);
   position: relative;
 }
 
