@@ -282,7 +282,7 @@
           <span class="chat-avatar-wrap"><span class="chat-avatar"></span></span>
           <span class="chat-history-copy">
             <strong>Lindsey</strong>
-            <small>How many episodes of a series is acceptabl...</small>
+            <small class="chat-history-last-message">How many episodes of a series is acceptabl...</small>
             <small>Conversation expires in <b>24 hours</b></small>
           </span>
         </button>
@@ -349,9 +349,9 @@
         <div class="mutual-availability-head">
           <button class="mutual-availability-back" type="button" aria-label="Back to chat"></button>
           <h2>Mutual availability</h2>
-          <div class="mutual-view-toggle" aria-hidden="true">
-            <span class="toggle-calendar active"></span>
-            <span class="toggle-list"></span>
+          <div class="mutual-view-toggle">
+            <button class="toggle-calendar active" type="button" aria-label="Calendar view"></button>
+            <button class="toggle-list" type="button" aria-label="List view"></button>
           </div>
         </div>
 
@@ -359,53 +359,69 @@
           Here are your shared free times this week. Pick the times you’d like to suggest.
         </p>
 
-        <h3 class="mutual-week-title">Feb 2026 — Week 4</h3>
+        <div class="mutual-calendar-view">
+          <h3 class="mutual-week-title">Feb 2026 — Week 4</h3>
 
-        <div class="mutual-calendar-head">
-          <div class="mutual-timezone">EST</div>
-          <div class="mutual-day-row">
-            <span class="active">MON</span>
-            <span>TUE</span>
-            <span>WED</span>
-            <span>THU</span>
-            <span>FRI</span>
-            <span>SAT</span>
-            <span>SUN</span>
+          <div class="mutual-calendar-head">
+            <div class="mutual-timezone">EST</div>
+            <div class="mutual-day-row">
+              <span class="active">MON</span>
+              <span>TUE</span>
+              <span>WED</span>
+              <span>THU</span>
+              <span>FRI</span>
+              <span>SAT</span>
+              <span>SUN</span>
+            </div>
+            <div class="mutual-date-row">
+              <span class="active">22</span>
+              <span>23</span>
+              <span>24</span>
+              <span>25</span>
+              <span>26</span>
+              <span>27</span>
+              <span>28</span>
+            </div>
           </div>
-          <div class="mutual-date-row">
-            <span class="active">22</span>
-            <span>23</span>
-            <span>24</span>
-            <span>25</span>
-            <span>26</span>
-            <span>27</span>
-            <span>28</span>
+
+          <div class="mutual-calendar-body">
+            <div class="mutual-time-column">
+              <span>8 AM</span>
+              <span>9 AM</span>
+              <span>10 AM</span>
+              <span>11 AM</span>
+              <span>12 PM</span>
+              <span>1 PM</span>
+              <span>2 PM</span>
+              <span>3 PM</span>
+              <span>4 PM</span>
+              <span>5 PM</span>
+              <span>6 PM</span>
+              <span>7 PM</span>
+              <span>8 PM</span>
+              <span>9 PM</span>
+            </div>
+            <div class="mutual-grid" aria-hidden="true"></div>
           </div>
+
+          <div class="mutual-legend">
+            <span><i class="legend-both"></i>Both Free</span>
+            <span><i class="legend-selected"></i>Selected times</span>
+          </div>
+
         </div>
 
-        <div class="mutual-calendar-body">
-          <div class="mutual-time-column">
-            <span>8 AM</span>
-            <span>9 AM</span>
-            <span>10 AM</span>
-            <span>11 AM</span>
-            <span>12 PM</span>
-            <span>1 PM</span>
-            <span>2 PM</span>
-            <span>3 PM</span>
-            <span>4 PM</span>
-            <span>5 PM</span>
-            <span>6 PM</span>
-            <span>7 PM</span>
-            <span>8 PM</span>
-            <span>9 PM</span>
-          </div>
-          <div class="mutual-grid" aria-hidden="true"></div>
+        <div class="mutual-list-view" hidden>
+          <div class="mutual-list-sections"></div>
         </div>
 
-        <div class="mutual-legend">
-          <span><i class="legend-both"></i>Both Free</span>
-          <span><i class="legend-selected"></i>Selected times</span>
+        <div class="mutual-selection-drawer">
+          <div class="mutual-selection-drawer-head">
+            <h4>Selected</h4>
+            <button class="mutual-selection-clear" type="button" hidden>Clear All</button>
+          </div>
+          <div class="mutual-selection-list" aria-live="polite"></div>
+          <button class="mutual-selection-send" type="button" disabled>Send Suggestion</button>
         </div>
       </section>
 

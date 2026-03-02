@@ -25,11 +25,17 @@ export function initializeBumbleFlow() {
         const matchFlowClose = document.querySelector(".match-flow-close");
         const chatHistoryOverlay = document.querySelector(".chat-history-overlay");
         const openLindseyChatButton = document.querySelector(".open-lindsey-chat");
+        const chatHistoryLastMessage = document.querySelector(".chat-history-last-message");
         const chatThreadOverlay = document.querySelector(".chat-thread-overlay");
         const chatThreadBack = document.querySelector(".chat-thread-back");
         const lookMoreTimesLink = document.querySelector(".look-more-times-link");
         const mutualAvailabilityOverlay = document.querySelector(".mutual-availability-overlay");
         const mutualAvailabilityBack = document.querySelector(".mutual-availability-back");
+        const mutualToggleCalendar = document.querySelector(".toggle-calendar");
+        const mutualToggleList = document.querySelector(".toggle-list");
+        const mutualCalendarView = document.querySelector(".mutual-calendar-view");
+        const mutualListView = document.querySelector(".mutual-list-view");
+        const mutualListSections = document.querySelector(".mutual-list-sections");
         const weekButtons = document.querySelectorAll(".day");
         const vibeButtons = document.querySelectorAll(".chips button");
         const planCards = document.querySelectorAll(".plan-card");
@@ -45,6 +51,10 @@ export function initializeBumbleFlow() {
         const connectedTimeList = document.querySelector(".connected-time-list");
         const connectedEmptyState = document.querySelector(".connected-empty-state");
         const mutualGrid = document.querySelector(".mutual-grid");
+        const mutualSelectionDrawer = document.querySelector(".mutual-selection-drawer");
+        const mutualSelectionList = document.querySelector(".mutual-selection-list");
+        const mutualSelectionClear = document.querySelector(".mutual-selection-clear");
+        const mutualSelectionSend = document.querySelector(".mutual-selection-send");
         const manualInlineWrap = document.querySelector(".manual-window-inline");
         const manualInlineInput = document.querySelector(".manual-inline-input");
         const manualInlineConfirm = document.querySelector(".manual-inline-confirm");
@@ -83,10 +93,16 @@ export function initializeBumbleFlow() {
           su: ["11:00 AM - 1:00 PM", "5:00 - 7:00 PM"],
         };
         const mutualDayOrder = ["m", "t", "w", "th", "f", "s", "su"];
+        const mutualDayShortLabels = { m: "MON", t: "TUE", w: "WED", th: "THU", f: "FRI", s: "SAT", su: "SUN" };
         const MUTUAL_GRID_START_MINUTES = 8 * 60;
         const MUTUAL_GRID_END_MINUTES = 22 * 60;
         const MUTUAL_GRID_STEP_MINUTES = 30;
         const CHAT_SUGGESTION_DAY_KEY = "m";
+        const createDefaultCollapsedMap = () =>
+          mutualDayOrder.reduce((acc, dayKey) => {
+            acc[dayKey] = false;
+            return acc;
+          }, {});
         let connectedDayData = JSON.parse(JSON.stringify(initialConnectedDayData));
         let activeConnectedDay = "m";
         const starredSlots = new Set();
@@ -96,6 +112,17 @@ export function initializeBumbleFlow() {
         let chatThreadCloseTimeout = null;
         let likeTransitionTimeout = null;
         let hasMatched = false;
+        let latestChatPreview = "How many episodes of a series is acceptabl...";
+        let mutualViewMode = "calendar";
+        let mutualListCollapsedByDay = createDefaultCollapsedMap();
+        const createEmptyMutualSelection = () =>
+          mutualDayOrder.reduce((acc, dayKey) => {
+            acc[dayKey] = new Set();
+            return acc;
+          }, {});
+        let mutualSelectedRowsByDay = createEmptyMutualSelection();
+        let mutualDragState = null;
+        let mutualDragPreview = null;
         const selectedTimeSlots = new Set();
         const navIconSrc = {
           profile: {
@@ -419,7 +446,316 @@ export function initializeBumbleFlow() {
           if (sentSuggestionMessage && !sentSuggestionMessage.hidden) return;
           renderChatSuggestions();
         };
-  
+
+        const formatMutualSelectionLabel = (dayKey, startMinutes, endMinutes) => {
+          const dayLabel = mutualDayShortLabels[dayKey] || dayKey.toUpperCase();
+          const startMeridiem = startMinutes >= 12 * 60 ? "PM" : "AM";
+          const endMeridiem = endMinutes >= 12 * 60 ? "PM" : "AM";
+          if (startMeridiem === endMeridiem) {
+            return `${dayLabel} ${formatMinutesToTime(startMinutes, false)} - ${formatMinutesToTime(endMinutes, false)} ${endMeridiem}`;
+          }
+          return `${dayLabel} ${formatMinutesToTime(startMinutes, true)} - ${formatMinutesToTime(endMinutes, true)}`;
+        };
+
+        const getRowMinutes = (row) => MUTUAL_GRID_START_MINUTES + (row - 1) * MUTUAL_GRID_STEP_MINUTES;
+
+        const applyRowRange = (targetSet, startRow, endRow, action = "add") => {
+          const minRow = Math.max(1, Math.min(startRow, endRow));
+          const maxRow = Math.min(28, Math.max(startRow, endRow));
+          for (let row = minRow; row <= maxRow; row += 1) {
+            if (action === "remove") targetSet.delete(row);
+            else targetSet.add(row);
+          }
+        };
+
+        const toContiguousRowRanges = (rowsSet) => {
+          const rows = Array.from(rowsSet).sort((a, b) => a - b);
+          if (rows.length === 0) return [];
+          const ranges = [];
+          let start = rows[0];
+          let end = rows[0];
+          for (let i = 1; i < rows.length; i += 1) {
+            if (rows[i] === end + 1) {
+              end = rows[i];
+            } else {
+              ranges.push([start, end]);
+              start = rows[i];
+              end = rows[i];
+            }
+          }
+          ranges.push([start, end]);
+          return ranges;
+        };
+
+        const buildMutualSelectionEntries = () => {
+          const entries = [];
+          mutualDayOrder.forEach((dayKey) => {
+            const rowsSet =
+              mutualDragPreview && mutualDragPreview.dayKey === dayKey
+                ? mutualDragPreview.rows
+                : mutualSelectedRowsByDay[dayKey] || new Set();
+            const ranges = toContiguousRowRanges(rowsSet);
+            ranges.forEach(([startRow, endRow]) => {
+              const startMinutes = getRowMinutes(startRow);
+              const endMinutes = getRowMinutes(endRow + 1);
+              const id = `${dayKey}:${startRow}-${endRow}`;
+              const isPreview =
+                !!mutualDragPreview &&
+                mutualDragPreview.dayKey === dayKey &&
+                startRow === Math.min(mutualDragPreview.startRow, mutualDragPreview.endRow) &&
+                endRow === Math.max(mutualDragPreview.startRow, mutualDragPreview.endRow);
+              entries.push({
+                id,
+                dayKey,
+                startRow,
+                endRow,
+                dayLabel: connectedDayData[dayKey]?.label || (mutualDayShortLabels[dayKey] || dayKey.toUpperCase()),
+                timeLabel: formatMutualSelectionLabel(dayKey, startMinutes, endMinutes).replace(/^[A-Z]{3}\s/, ""),
+                label: formatMutualSelectionLabel(dayKey, startMinutes, endMinutes),
+                isPreview,
+              });
+            });
+          });
+          return entries;
+        };
+
+        const renderMutualSelectionDrawer = () => {
+          if (!mutualSelectionDrawer || !mutualSelectionList) return;
+          const entries = buildMutualSelectionEntries();
+          if (entries.length === 0) {
+            mutualSelectionDrawer.classList.remove("open");
+            mutualSelectionList.innerHTML = "";
+            if (mutualSelectionSend) mutualSelectionSend.disabled = true;
+            if (mutualSelectionClear) mutualSelectionClear.hidden = true;
+            return;
+          }
+          mutualSelectionDrawer.classList.add("open");
+          if (mutualSelectionSend) mutualSelectionSend.disabled = false;
+          if (mutualSelectionClear) mutualSelectionClear.hidden = false;
+          mutualSelectionList.innerHTML = entries
+            .map(
+              (entry) => `
+                <div class="mutual-selection-item ${entry.isPreview ? "preview" : ""}" data-selection-id="${entry.id}">
+                  <div class="mutual-selection-item-copy">
+                    <p class="mutual-selection-item-day">${entry.dayLabel}</p>
+                    <p class="mutual-selection-item-time">${entry.timeLabel}</p>
+                  </div>
+                  ${entry.isPreview ? "" : '<button class="mutual-selection-remove" type="button" aria-label="Remove selected time">×</button>'}
+                </div>
+              `
+            )
+            .join("");
+        };
+
+        const getCommittedMutualSelections = () => {
+          const entries = [];
+          mutualDayOrder.forEach((dayKey) => {
+            const rowsSet = mutualSelectedRowsByDay[dayKey] || new Set();
+            const ranges = toContiguousRowRanges(rowsSet);
+            ranges.forEach(([startRow, endRow]) => {
+              const startMinutes = getRowMinutes(startRow);
+              const endMinutes = getRowMinutes(endRow + 1);
+              entries.push({
+                day: connectedDayData[dayKey]?.label || (mutualDayShortLabels[dayKey] || dayKey.toUpperCase()),
+                label: formatMutualSelectionLabel(dayKey, startMinutes, endMinutes).replace(/^[A-Z]{3}\s/, ""),
+                duration: Math.max(0.5, (endMinutes - startMinutes) / 60),
+              });
+            });
+          });
+          return entries;
+        };
+
+        const formatListIntervalLabel = (startMinutes, endMinutes) => {
+          const startMeridiem = startMinutes >= 12 * 60 ? "PM" : "AM";
+          const endMeridiem = endMinutes >= 12 * 60 ? "PM" : "AM";
+          if (startMeridiem === endMeridiem) {
+            return `${formatMinutesToTime(startMinutes, false)} - ${formatMinutesToTime(endMinutes, false)} ${endMeridiem}`;
+          }
+          return `${formatMinutesToTime(startMinutes, true)} - ${formatMinutesToTime(endMinutes, true)}`;
+        };
+
+        const isIntervalSelected = (dayKey, startMinutes, endMinutes) => {
+          const rows = mutualSelectedRowsByDay[dayKey] || new Set();
+          const startRow = Math.floor((startMinutes - MUTUAL_GRID_START_MINUTES) / MUTUAL_GRID_STEP_MINUTES) + 1;
+          const endRowExclusive = Math.floor((endMinutes - MUTUAL_GRID_START_MINUTES) / MUTUAL_GRID_STEP_MINUTES) + 1;
+          for (let row = startRow; row < endRowExclusive; row += 1) {
+            if (!rows.has(row)) return false;
+          }
+          return true;
+        };
+
+        const setIntervalSelection = (dayKey, startMinutes, endMinutes, shouldSelect) => {
+          const rows = new Set(mutualSelectedRowsByDay[dayKey] || []);
+          const startRow = Math.floor((startMinutes - MUTUAL_GRID_START_MINUTES) / MUTUAL_GRID_STEP_MINUTES) + 1;
+          const endRowExclusive = Math.floor((endMinutes - MUTUAL_GRID_START_MINUTES) / MUTUAL_GRID_STEP_MINUTES) + 1;
+          for (let row = startRow; row < endRowExclusive; row += 1) {
+            if (shouldSelect) rows.add(row);
+            else rows.delete(row);
+          }
+          mutualSelectedRowsByDay = { ...mutualSelectedRowsByDay, [dayKey]: rows };
+        };
+
+        const renderMutualListView = () => {
+          if (!mutualListSections) return;
+          const overlaps = getMutualAvailabilityByDay();
+          const dateLabels = { m: "2/16", t: "2/17", w: "2/18", th: "2/19", f: "2/20", s: "2/21", su: "2/22" };
+
+          const starredIntervalsByDay = mutualDayOrder.reduce((acc, dayKey) => {
+            const slots = connectedDayData[dayKey]?.slots || [];
+            const starred = [];
+            slots.forEach((slotLabel) => {
+              const slotId = `${dayKey}|${slotLabel}`;
+              if (!starredSlots.has(slotId)) return;
+              const range = parseScheduleRange(slotLabel);
+              if (!range) return;
+              starred.push(range);
+            });
+            acc[dayKey] = starred;
+            return acc;
+          }, {});
+
+          mutualListSections.innerHTML = mutualDayOrder
+            .map((dayKey, index) => {
+              const dayLabel = connectedDayData[dayKey]?.label || dayKey.toUpperCase();
+              const dayOverlaps = overlaps[dayKey] || [];
+              const overlapKeySet = new Set(dayOverlaps.map(([startMinutes, endMinutes]) => `${startMinutes}-${endMinutes}`));
+              const starredRanges = starredIntervalsByDay[dayKey] || [];
+              const starredKeySet = new Set(starredRanges.map(([startMinutes, endMinutes]) => `${startMinutes}-${endMinutes}`));
+              const selectedRanges = toContiguousRowRanges(mutualSelectedRowsByDay[dayKey] || new Set()).map(([startRow, endRow]) => {
+                const startMinutes = getRowMinutes(startRow);
+                const endMinutes = getRowMinutes(endRow + 1);
+                return [startMinutes, endMinutes];
+              });
+              const customSelectedRanges = selectedRanges.filter(
+                ([startMinutes, endMinutes]) => !overlapKeySet.has(`${startMinutes}-${endMinutes}`)
+              );
+              const customKeySet = new Set(customSelectedRanges.map(([startMinutes, endMinutes]) => `${startMinutes}-${endMinutes}`));
+
+              const starredFallbackRanges = starredRanges.filter(
+                ([startMinutes, endMinutes]) =>
+                  !overlapKeySet.has(`${startMinutes}-${endMinutes}`) &&
+                  !customKeySet.has(`${startMinutes}-${endMinutes}`)
+              );
+
+              const overlapSlots = dayOverlaps.map(([startMinutes, endMinutes], slotIndex) => {
+                const duration = Math.max(0.5, (endMinutes - startMinutes) / 60);
+                const durationLabel = `${duration % 1 === 0 ? `${duration}` : duration.toFixed(1)} hour block`;
+                const isChecked = isIntervalSelected(dayKey, startMinutes, endMinutes);
+                const checked = isChecked ? "checked" : "";
+                const isBestTime = starredKeySet.has(`${startMinutes}-${endMinutes}`);
+                return `
+                  <article class="mutual-list-slot-item ${isChecked ? "selected" : ""}">
+                    <span class="mutual-list-clock" aria-hidden="true"></span>
+                    <div class="mutual-list-slot-copy">
+                      <h5>${formatListIntervalLabel(startMinutes, endMinutes)}</h5>
+                      <p>${durationLabel}</p>
+                    </div>
+                    <div class="mutual-list-slot-meta">
+                      ${isBestTime ? '<span class="mutual-list-best-pill">Their best time</span>' : ""}
+                    </div>
+                    <input class="mutual-list-select" type="checkbox" data-day="${dayKey}" data-start="${startMinutes}" data-end="${endMinutes}" aria-label="Select ${dayLabel} slot ${slotIndex + 1}" ${checked} />
+                  </article>
+                `;
+              });
+
+              const customSlots = customSelectedRanges.map(([startMinutes, endMinutes], customIndex) => {
+                const duration = Math.max(0.5, (endMinutes - startMinutes) / 60);
+                const durationLabel = `${duration % 1 === 0 ? `${duration}` : duration.toFixed(1)} hour block`;
+                const isBestTime = starredKeySet.has(`${startMinutes}-${endMinutes}`);
+                return `
+                  <article class="mutual-list-slot-item selected custom-selected">
+                    <span class="mutual-list-clock" aria-hidden="true"></span>
+                    <div class="mutual-list-slot-copy">
+                      <h5>${formatListIntervalLabel(startMinutes, endMinutes)}</h5>
+                      <p><span class="mutual-list-custom-pill">Custom selected</span> ${durationLabel}</p>
+                    </div>
+                    <div class="mutual-list-slot-meta">
+                      ${isBestTime ? '<span class="mutual-list-best-pill">Their best time</span>' : ""}
+                    </div>
+                    <input class="mutual-list-select" type="checkbox" data-day="${dayKey}" data-start="${startMinutes}" data-end="${endMinutes}" aria-label="Select ${dayLabel} custom slot ${customIndex + 1}" checked />
+                  </article>
+                `;
+              });
+
+              const starredFallbackSlots = starredFallbackRanges.map(([startMinutes, endMinutes], starredIndex) => {
+                const duration = Math.max(0.5, (endMinutes - startMinutes) / 60);
+                const durationLabel = `${duration % 1 === 0 ? `${duration}` : duration.toFixed(1)} hour block`;
+                const isChecked = isIntervalSelected(dayKey, startMinutes, endMinutes);
+                const checked = isChecked ? "checked" : "";
+                return `
+                  <article class="mutual-list-slot-item ${isChecked ? "selected" : ""} best-time-only">
+                    <span class="mutual-list-clock" aria-hidden="true"></span>
+                    <div class="mutual-list-slot-copy">
+                      <h5>${formatListIntervalLabel(startMinutes, endMinutes)}</h5>
+                      <p>${durationLabel}</p>
+                    </div>
+                    <div class="mutual-list-slot-meta">
+                      <span class="mutual-list-best-pill">Their best time</span>
+                    </div>
+                    <input class="mutual-list-select" type="checkbox" data-day="${dayKey}" data-start="${startMinutes}" data-end="${endMinutes}" aria-label="Select ${dayLabel} best time slot ${starredIndex + 1}" ${checked} />
+                  </article>
+                `;
+              });
+
+              const slotsHtml = [...overlapSlots, ...customSlots, ...starredFallbackSlots].join("");
+
+              const isCollapsed = !!mutualListCollapsedByDay[dayKey];
+
+              return `
+                <section class="mutual-list-day-section">
+                  <div class="mutual-list-day-title">
+                    <h4>${dayLabel} ${dateLabels[dayKey] || ""}</h4>
+                    ${index === 0 ? '<span class="mutual-list-today-pill">Today</span>' : ""}
+                  </div>
+                  <article class="mutual-list-day-card">
+                    <div class="mutual-list-day-head">
+                      <p>${dayOverlaps.length} overlapping time slots</p>
+                      <button class="mutual-list-day-toggle" type="button" data-day="${dayKey}" aria-label="Toggle ${dayLabel}" aria-expanded="${isCollapsed ? "false" : "true"}"></button>
+                    </div>
+                    <div class="mutual-list-slot-items" ${isCollapsed ? "hidden" : ""}>
+                      ${slotsHtml || '<p class="mutual-list-empty">No overlapping slots</p>'}
+                    </div>
+                  </article>
+                </section>
+              `;
+            })
+            .join("");
+        };
+
+        const setMutualViewMode = (mode) => {
+          mutualViewMode = mode === "list" ? "list" : "calendar";
+          const calendarActive = mutualViewMode === "calendar";
+          if (mutualToggleCalendar) mutualToggleCalendar.classList.toggle("active", calendarActive);
+          if (mutualToggleList) mutualToggleList.classList.toggle("active", !calendarActive);
+          if (mutualCalendarView) mutualCalendarView.hidden = !calendarActive;
+          if (mutualListView) mutualListView.hidden = calendarActive;
+          if (!calendarActive) renderMutualListView();
+        };
+
+        const getMutualGridCellFromPointer = (event) => {
+          if (!mutualGrid) return null;
+          const rect = mutualGrid.getBoundingClientRect();
+          if (!rect.width || !rect.height) return null;
+          const x = Math.min(Math.max(event.clientX - rect.left, 0), Math.max(0, rect.width - 0.01));
+          const y = Math.min(Math.max(event.clientY - rect.top, 0), Math.max(0, rect.height - 0.01));
+          const col = Math.min(7, Math.max(1, Math.floor((x / rect.width) * 7) + 1));
+          const row = Math.min(28, Math.max(1, Math.floor((y / rect.height) * 28) + 1));
+          return { col, row };
+        };
+
+        const getMutualSelectionFromDrag = (dragState, pointerRow) => {
+          const action = pointerRow >= dragState.startRow ? "add" : "remove";
+          const nextRows = new Set(dragState.baseRows);
+          applyRowRange(nextRows, dragState.startRow, pointerRow, action);
+          return {
+            dayKey: dragState.dayKey,
+            action,
+            startRow: dragState.startRow,
+            endRow: pointerRow,
+            rows: nextRows,
+          };
+        };
+
         const renderMutualAvailabilityCalendar = () => {
           if (!mutualGrid) return;
           const mutualByDay = getMutualAvailabilityByDay();
@@ -434,12 +770,31 @@ export function initializeBumbleFlow() {
               const startUnits = (clampedStart - MUTUAL_GRID_START_MINUTES) / MUTUAL_GRID_STEP_MINUTES;
               const spanUnits = (clampedEnd - clampedStart) / MUTUAL_GRID_STEP_MINUTES;
               const slot = document.createElement("span");
-              slot.className = "mutual-slot";
+              slot.className = "mutual-slot both-free";
               slot.style.gridColumn = String(dayIndex + 1);
               slot.style.gridRow = `${Math.floor(startUnits) + 1} / span ${Math.max(1, Math.round(spanUnits))}`;
               mutualGrid.appendChild(slot);
             });
           });
+
+          mutualDayOrder.forEach((dayKey, dayIndex) => {
+            const dayRows =
+              mutualDragPreview && mutualDragPreview.dayKey === dayKey
+                ? mutualDragPreview.rows
+                : mutualSelectedRowsByDay[dayKey] || new Set();
+            const ranges = toContiguousRowRanges(dayRows);
+            ranges.forEach(([startRow, endRow]) => {
+              const spanUnits = endRow - startRow + 1;
+              const slot = document.createElement("span");
+              slot.className = "mutual-slot selected";
+              slot.style.gridColumn = String(dayIndex + 1);
+              slot.style.gridRow = `${startRow} / span ${spanUnits}`;
+              mutualGrid.appendChild(slot);
+            });
+          });
+
+          renderMutualSelectionDrawer();
+          renderMutualListView();
         };
   
         const refreshMutualAvailabilityIfOpen = () => {
@@ -450,6 +805,7 @@ export function initializeBumbleFlow() {
         const openMutualAvailability = () => {
           if (!mutualAvailabilityOverlay || !phone) return;
           renderMutualAvailabilityCalendar();
+          setMutualViewMode(mutualViewMode);
           mutualAvailabilityOverlay.classList.remove("closing");
           mutualAvailabilityOverlay.classList.add("open");
           mutualAvailabilityOverlay.setAttribute("aria-hidden", "false");
@@ -464,6 +820,9 @@ export function initializeBumbleFlow() {
             mutualAvailabilityOverlay.classList.remove("open", "closing");
             mutualAvailabilityOverlay.setAttribute("aria-hidden", "true");
             phone.classList.remove("mutual-availability-open");
+            mutualDragState = null;
+            mutualDragPreview = null;
+            renderMutualSelectionDrawer();
           }, 280);
         };
   
@@ -773,7 +1132,145 @@ export function initializeBumbleFlow() {
         if (mutualAvailabilityBack) {
           mutualAvailabilityBack.addEventListener("click", closeMutualAvailability);
         }
-  
+
+        if (mutualToggleCalendar) {
+          mutualToggleCalendar.addEventListener("click", () => setMutualViewMode("calendar"));
+        }
+
+        if (mutualToggleList) {
+          mutualToggleList.addEventListener("click", () => setMutualViewMode("list"));
+        }
+
+        if (mutualGrid) {
+          const onMutualPointerMove = (event) => {
+            if (!mutualDragState) return;
+            const cell = getMutualGridCellFromPointer(event);
+            if (!cell) return;
+            if (cell.col !== mutualDragState.col) return;
+            const selection = getMutualSelectionFromDrag(mutualDragState, cell.row);
+            if (!selection) return;
+            mutualDragPreview = selection;
+            renderMutualAvailabilityCalendar();
+          };
+
+          const commitMutualDrag = () => {
+            if (mutualDragPreview) {
+              mutualSelectedRowsByDay = {
+                ...mutualSelectedRowsByDay,
+                [mutualDragPreview.dayKey]: new Set(mutualDragPreview.rows),
+              };
+            }
+            mutualDragState = null;
+            mutualDragPreview = null;
+            renderMutualAvailabilityCalendar();
+          };
+
+          mutualGrid.addEventListener("pointerdown", (event) => {
+            if (event.button !== undefined && event.button !== 0) return;
+            const cell = getMutualGridCellFromPointer(event);
+            if (!cell) return;
+            const dayKey = mutualDayOrder[cell.col - 1];
+            const baseRows = new Set(mutualSelectedRowsByDay[dayKey] || []);
+            mutualDragState = {
+              dayKey,
+              col: cell.col,
+              startRow: cell.row,
+              baseRows,
+            };
+            const initialRows = new Set(baseRows);
+            initialRows.add(cell.row);
+            mutualDragPreview = { dayKey, action: "add", startRow: cell.row, endRow: cell.row, rows: initialRows };
+            if (typeof mutualGrid.setPointerCapture === "function") {
+              try {
+                mutualGrid.setPointerCapture(event.pointerId);
+              } catch (_error) {}
+            }
+            renderMutualAvailabilityCalendar();
+            event.preventDefault();
+          });
+
+          mutualGrid.addEventListener("pointermove", onMutualPointerMove);
+          mutualGrid.addEventListener("pointerup", () => {
+            if (!mutualDragState) return;
+            commitMutualDrag();
+          });
+          mutualGrid.addEventListener("pointercancel", () => {
+            if (!mutualDragState) return;
+            mutualDragState = null;
+            mutualDragPreview = null;
+            renderMutualAvailabilityCalendar();
+          });
+        }
+
+        if (mutualSelectionList) {
+          mutualSelectionList.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLElement) || !target.classList.contains("mutual-selection-remove")) return;
+            const item = target.closest(".mutual-selection-item");
+            if (!item) return;
+            const selectionId = item.getAttribute("data-selection-id") || "";
+            const match = selectionId.match(/^([a-z]+):(\d+)-(\d+)$/i);
+            if (!match) return;
+            const dayKey = match[1];
+            const startRow = Number(match[2]);
+            const endRow = Number(match[3]);
+            if (!mutualSelectedRowsByDay[dayKey]) return;
+            const nextSet = new Set(mutualSelectedRowsByDay[dayKey]);
+            applyRowRange(nextSet, startRow, endRow, "remove");
+            mutualSelectedRowsByDay = {
+              ...mutualSelectedRowsByDay,
+              [dayKey]: nextSet,
+            };
+            renderMutualAvailabilityCalendar();
+          });
+        }
+
+        if (mutualListSections) {
+          mutualListSections.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLElement)) return;
+
+            const dayToggle = target.closest(".mutual-list-day-toggle");
+            if (dayToggle instanceof HTMLElement) {
+              const dayKey = dayToggle.dataset.day || "";
+              if (!dayKey) return;
+              mutualListCollapsedByDay = {
+                ...mutualListCollapsedByDay,
+                [dayKey]: !mutualListCollapsedByDay[dayKey],
+              };
+              renderMutualListView();
+              return;
+            }
+
+            const slotItem = target.closest(".mutual-list-slot-item");
+            if (!(slotItem instanceof HTMLElement)) return;
+            if (target.classList.contains("mutual-list-select")) return;
+            const checkbox = slotItem.querySelector(".mutual-list-select");
+            if (!(checkbox instanceof HTMLInputElement)) return;
+            checkbox.click();
+          });
+
+          mutualListSections.addEventListener("change", (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLInputElement) || !target.classList.contains("mutual-list-select")) return;
+            const dayKey = target.dataset.day || "";
+            const start = Number(target.dataset.start || "0");
+            const end = Number(target.dataset.end || "0");
+            if (!dayKey || !start || !end) return;
+            setIntervalSelection(dayKey, start, end, target.checked);
+            renderMutualAvailabilityCalendar();
+          });
+        }
+
+        if (mutualSelectionClear) {
+          mutualSelectionClear.addEventListener("click", () => {
+            mutualSelectedRowsByDay = createEmptyMutualSelection();
+            mutualDragPreview = null;
+            mutualDragState = null;
+            renderMutualAvailabilityCalendar();
+          });
+        }
+
         const clearCalendarTimeouts = () => {
           calendarSequenceTimeouts.forEach((id) => clearTimeout(id));
           calendarSequenceTimeouts = [];
@@ -922,7 +1419,7 @@ export function initializeBumbleFlow() {
           return hour24 * 60 + minute;
         };
   
-        const formatMinutesToTime = (minutes, includeMeridiem = true) => {
+        function formatMinutesToTime(minutes, includeMeridiem = true) {
           const normalized = ((minutes % (24 * 60)) + 24 * 60) % (24 * 60);
           const hour24 = Math.floor(normalized / 60);
           const minute = normalized % 60;
@@ -930,7 +1427,7 @@ export function initializeBumbleFlow() {
           const hour12 = hour24 % 12 || 12;
           const minuteText = String(minute).padStart(2, "0");
           return includeMeridiem ? `${hour12}:${minuteText} ${meridiem}` : `${hour12}:${minuteText}`;
-        };
+        }
   
         const getRangeParts = (labelText) => {
           const [startRaw = "", endRaw = ""] = labelText.split("-").map((part) => part.trim());
@@ -1051,10 +1548,31 @@ export function initializeBumbleFlow() {
               `
             )
             .join("");
+          const latest = items[items.length - 1];
+          if (latest) {
+            const extraCount = items.length - 1;
+            latestChatPreview = extraCount > 0
+              ? `You suggested: ${latest.day}, ${latest.label} +${extraCount} more`
+              : `You suggested: ${latest.day}, ${latest.label}`;
+            if (chatHistoryLastMessage) chatHistoryLastMessage.textContent = latestChatPreview;
+          }
           scheduleOptionsCard.hidden = true;
           sentSuggestionMessage.hidden = false;
         };
-  
+
+        if (mutualSelectionSend) {
+          mutualSelectionSend.addEventListener("click", () => {
+            const payload = getCommittedMutualSelections();
+            if (payload.length === 0) return;
+            sendSuggestionsToThread(payload);
+            closeMutualAvailability();
+            mutualSelectedRowsByDay = createEmptyMutualSelection();
+            mutualDragPreview = null;
+            mutualDragState = null;
+            renderMutualAvailabilityCalendar();
+          });
+        }
+
         if (sendSuggestionButton) {
           sendSuggestionButton.addEventListener("click", () => {
             if (selectedTimeSlots.size === 0) return;
@@ -1080,4 +1598,5 @@ export function initializeBumbleFlow() {
   
         renderChatSuggestions();
         updateSendSuggestionState();
+        if (chatHistoryLastMessage) chatHistoryLastMessage.textContent = latestChatPreview;
 }
