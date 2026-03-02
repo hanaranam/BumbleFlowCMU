@@ -33,12 +33,26 @@
         <section class="planner-wrap">
           <div class="section-head">
             <h2 class="section-title">Bumble Flow</h2>
+            <span class="flow-premium-pill" hidden><i aria-hidden="true"></i> PREMIUM</span>
           </div>
 
           <article class="planner-card" data-node-id="67:2419">
             <button class="unlock-overlay">Unlock Intent Planner</button>
 
             <div class="planner-lockable">
+              <article class="upcoming-meetup-card" hidden>
+                <h3 class="upcoming-meetup-title">Upcoming meetup on Thursday, Feb 19</h3>
+                <p class="upcoming-meetup-subtitle">Stay in sync and follow up before your coffee date.</p>
+                <div class="upcoming-meetup-row">
+                  <span class="upcoming-meetup-avatar" aria-hidden="true"></span>
+                  <span class="upcoming-meetup-person">
+                    <strong>Lindsey</strong>
+                    <small><span aria-hidden="true">☕</span> Coffee</small>
+                  </span>
+                  <button class="upcoming-meetup-chat" type="button" aria-label="Open chat with Lindsey"></button>
+                </div>
+              </article>
+
               <div class="calendar-sync-row" data-state="connect">
                 <div class="calendar-icon-wrap">
                   <img src="https://www.figma.com/api/mcp/asset/1dfb05d1-c6c6-49f5-8c46-2bec04873bf9" alt="" />
@@ -58,7 +72,7 @@
                 <h3>Manual window selection</h3>
                 <p>We’ll suggest matches when you’re most likely available</p>
                 <div class="days">
-                  <button class="day active"><span>M</span><i></i></button>
+                  <button class="day"><span>M</span><i></i></button>
                   <button class="day"><span>T</span><i></i></button>
                   <button class="day"><span>W</span><i></i></button>
                   <button class="day"><span>TH</span><i></i></button>
@@ -334,6 +348,13 @@
             <p class="sent-suggestion-title">You Suggested a Meetup Request</p>
             <div class="sent-suggestion-list"></div>
           </article>
+
+          <article class="incoming-suggestion-message" hidden>
+            <p class="incoming-suggestion-title">Lindsey Suggested a New Meetup Request</p>
+            <div class="incoming-suggestion-list"></div>
+            <button class="incoming-accept-button" type="button" hidden>Accept</button>
+            <button class="incoming-suggest-other-button" type="button">Suggest another time</button>
+          </article>
         </div>
 
         <div class="chat-thread-compose">
@@ -407,6 +428,7 @@
           <div class="mutual-legend">
             <span><i class="legend-both"></i>Both Free</span>
             <span><i class="legend-selected"></i>Selected times</span>
+            <span><i class="legend-their-suggestion"></i>Their suggestion</span>
           </div>
 
         </div>

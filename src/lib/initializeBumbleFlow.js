@@ -3,13 +3,9 @@ export function initializeBumbleFlow() {
   if (window.__bumbleFlowInitialized) return;
   window.__bumbleFlowInitialized = true;
         const params = new URLSearchParams(window.location.search);
-        const queryPage = params.get("page");
         const queryPlan = params.get("plan");
-        const path = window.location.pathname.toLowerCase();
-        const pathPage = path.includes("liked") ? "liked" : path.includes("chat") ? "chats" : "";
-        const page = queryPage || pathPage || "discover";
-        const pageToVariant = { discover: "discover", liked: "liked", chats: "chats" };
-        const activeVariant = pageToVariant[page] || "discover";
+        const page = "discover";
+        const activeVariant = "discover";
         const phone = document.querySelector(".phone");
         const navVariants = document.querySelectorAll(".nav-variant");
         const navItems = document.querySelectorAll(".nav-item");
@@ -27,6 +23,7 @@ export function initializeBumbleFlow() {
         const openLindseyChatButton = document.querySelector(".open-lindsey-chat");
         const chatHistoryLastMessage = document.querySelector(".chat-history-last-message");
         const chatThreadOverlay = document.querySelector(".chat-thread-overlay");
+        const chatThreadBody = document.querySelector(".chat-thread-body");
         const chatThreadBack = document.querySelector(".chat-thread-back");
         const lookMoreTimesLink = document.querySelector(".look-more-times-link");
         const mutualAvailabilityOverlay = document.querySelector(".mutual-availability-overlay");
@@ -62,6 +59,12 @@ export function initializeBumbleFlow() {
         const addMoreTimeButton = document.querySelector(".add-more-time");
         const emptyAddManualButton = document.querySelector(".empty-add-manual");
         const manualOptions = document.querySelectorAll(".manual-option");
+        const flowPremiumPill = document.querySelector(".flow-premium-pill");
+        const upcomingMeetupCard = document.querySelector(".upcoming-meetup-card");
+        const upcomingMeetupTitle = document.querySelector(".upcoming-meetup-title");
+        const upcomingMeetupSubtitle = document.querySelector(".upcoming-meetup-subtitle");
+        const upcomingMeetupName = document.querySelector(".upcoming-meetup-person strong");
+        const upcomingMeetupChat = document.querySelector(".upcoming-meetup-chat");
         const timeOptionsGrid = document.querySelector(".time-options-grid");
         const adjustDurationPanel = document.querySelector(".adjust-duration-panel");
         const adjustDurationClose = document.querySelector(".adjust-duration-close");
@@ -72,6 +75,10 @@ export function initializeBumbleFlow() {
         const scheduleOptionsSubtitle = document.querySelector(".schedule-options-card > p");
         const sentSuggestionMessage = document.querySelector(".sent-suggestion-message");
         const sentSuggestionList = document.querySelector(".sent-suggestion-list");
+        const incomingSuggestionMessage = document.querySelector(".incoming-suggestion-message");
+        const incomingSuggestionList = document.querySelector(".incoming-suggestion-list");
+        const incomingAcceptButton = document.querySelector(".incoming-accept-button");
+        const incomingSuggestOtherButton = document.querySelector(".incoming-suggest-other-button");
         const normalizeWindow = (value) => value.replace(/\s+/g, " ").trim().toLowerCase();
         let calendarSequenceTimeouts = [];
         const initialConnectedDayData = {
@@ -113,6 +120,12 @@ export function initializeBumbleFlow() {
         let likeTransitionTimeout = null;
         let hasMatched = false;
         let latestChatPreview = "How many episodes of a series is acceptabl...";
+        let lindseyResponseTimeout = null;
+        let lindseySuggestedOptions = [];
+        let lindseySelectedOptionId = "";
+        let kevinSuggestionRounds = 0;
+        let lindseyAcceptanceTimeout = null;
+        let finalizedMeetupDetails = null;
         let mutualViewMode = "calendar";
         let mutualListCollapsedByDay = createDefaultCollapsedMap();
         const createEmptyMutualSelection = () =>
@@ -218,6 +231,23 @@ export function initializeBumbleFlow() {
   
         const updateChatHistoryMatchState = () => {
           if (openLindseyChatButton) openLindseyChatButton.hidden = !hasMatched;
+        };
+
+        const openDiscoverPage = () => {
+          if (!phone) return;
+          phone.dataset.page = "discover";
+          closeChatHistory();
+          if (chatThreadOverlay) {
+            chatThreadOverlay.classList.remove("open", "closing");
+            chatThreadOverlay.setAttribute("aria-hidden", "true");
+          }
+          if (mutualAvailabilityOverlay) {
+            mutualAvailabilityOverlay.classList.remove("open", "closing");
+            mutualAvailabilityOverlay.setAttribute("aria-hidden", "true");
+          }
+          phone.classList.remove("chat-thread-open");
+          phone.classList.remove("mutual-availability-open");
+          setActiveVariantUi("discover");
         };
   
         const applyFigmaImageFallbacks = () => {
@@ -443,7 +473,7 @@ export function initializeBumbleFlow() {
   
         const refreshChatSuggestionsIfVisible = () => {
           if (!chatThreadOverlay || !chatThreadOverlay.classList.contains("open")) return;
-          if (sentSuggestionMessage && !sentSuggestionMessage.hidden) return;
+          if (chatThreadBody && chatThreadBody.querySelector(".sent-suggestion-message:not([hidden])")) return;
           renderChatSuggestions();
         };
 
@@ -572,6 +602,242 @@ export function initializeBumbleFlow() {
             return `${formatMinutesToTime(startMinutes, false)} - ${formatMinutesToTime(endMinutes, false)} ${endMeridiem}`;
           }
           return `${formatMinutesToTime(startMinutes, true)} - ${formatMinutesToTime(endMinutes, true)}`;
+        };
+
+        const updateChatHistoryPreview = (text) => {
+          latestChatPreview = text;
+          if (chatHistoryLastMessage) chatHistoryLastMessage.textContent = latestChatPreview;
+        };
+
+        const getDayKeyFromLabel = (dayLabel = "") => {
+          const normalized = dayLabel.trim().toLowerCase();
+          const found = Object.entries(connectedDayData).find(([, value]) => value?.label?.toLowerCase() === normalized);
+          return found ? found[0] : "";
+        };
+
+        const getSuggestionIdentityKey = ({ day = "", label = "" }) => {
+          const dayKey = getDayKeyFromLabel(day);
+          const range = parseScheduleRange(label);
+          if (!dayKey || !range) return `${day.toLowerCase()}|${label.toLowerCase()}`;
+          return `${dayKey}|${range[0]}-${range[1]}`;
+        };
+
+        const clearLindseyResponseTimeout = () => {
+          if (!lindseyResponseTimeout) return;
+          window.clearTimeout(lindseyResponseTimeout);
+          lindseyResponseTimeout = null;
+        };
+
+        const clearLindseyAcceptanceTimeout = () => {
+          if (!lindseyAcceptanceTimeout) return;
+          window.clearTimeout(lindseyAcceptanceTimeout);
+          lindseyAcceptanceTimeout = null;
+        };
+
+        const appendMeetingConfirmationCard = ({ statusText, day, label, duration }) => {
+          if (!chatThreadBody) return;
+          finalizedMeetupDetails = { day, label, duration };
+          const confirmationCard = document.createElement("article");
+          confirmationCard.className = "meeting-confirmation-message";
+          confirmationCard.dataset.day = day;
+          confirmationCard.dataset.label = label;
+          confirmationCard.dataset.duration = String(duration);
+          confirmationCard.innerHTML = `
+            <p class="meeting-confirmation-day">Today</p>
+            <p class="meeting-confirmation-status">${statusText}</p>
+            <div class="meeting-confirmation-card">
+              <div class="meeting-confirmation-head">
+                <span class="meeting-confirmation-icon" aria-hidden="true"></span>
+                <div>
+                  <p class="meeting-confirmation-title">Confirm Meeting Details</p>
+                  <p class="meeting-confirmation-subtitle">Mutual Availability Overlap</p>
+                </div>
+              </div>
+              <div class="meeting-confirmation-actions">
+                <button class="meeting-action-btn" type="button" data-action="sync-calendar"><span class="gcal-badge" aria-hidden="true"></span> Sync to Google Calendar</button>
+                <button class="meeting-action-btn" type="button" data-action="add-bumble-flow"><span class="flow-badge" aria-hidden="true"></span> Add to Bumble Flow</button>
+              </div>
+              <div class="meeting-confirmation-place">
+                <p class="meeting-confirmation-time">${day}, ${label}</p>
+                <p class="meeting-confirmation-place-label">Suggested Place</p>
+                <div class="meeting-confirmation-venue">
+                  <span class="meeting-venue-thumb" aria-hidden="true"></span>
+                  <div>
+                    <p class="meeting-venue-name">DiAnoia's Eatery</p>
+                    <p class="meeting-venue-type">Italian restaurant</p>
+                    <p class="meeting-venue-meta"><span>Open now</span> • <span>5 min</span></p>
+                  </div>
+                </div>
+                <button class="meeting-maps-btn" type="button">View on Maps</button>
+              </div>
+            </div>
+          `;
+          chatThreadBody.appendChild(confirmationCard);
+          chatThreadBody.scrollTop = chatThreadBody.scrollHeight;
+          updateChatHistoryPreview(`${statusText} (${day}, ${label})`);
+        };
+
+        const applyFinalizedMeetupToDiscover = (meetupDetails) => {
+          if (!phone || !calendarRow || !connectedView) return;
+          const dayLabel = meetupDetails?.day || "Thursday";
+          const normalizedDay = dayLabel.trim().toLowerCase();
+          const dayToDateLabel = {
+            monday: "Monday, Feb 16",
+            tuesday: "Tuesday, Feb 17",
+            wednesday: "Wednesday, Feb 18",
+            thursday: "Thursday, Feb 19",
+            friday: "Friday, Feb 20",
+            saturday: "Saturday, Feb 21",
+            sunday: "Sunday, Feb 22",
+          };
+
+          if (upcomingMeetupCard) upcomingMeetupCard.hidden = false;
+          if (flowPremiumPill) flowPremiumPill.hidden = false;
+          if (upcomingMeetupTitle) upcomingMeetupTitle.textContent = `Upcoming meetup on ${dayToDateLabel[normalizedDay] || "Thursday, Feb 19"}`;
+          if (upcomingMeetupSubtitle) upcomingMeetupSubtitle.textContent = "Stay in sync and follow up before your coffee date.";
+          if (upcomingMeetupName) upcomingMeetupName.textContent = "Lindsey";
+
+          if (phone.dataset.plan !== "premium") phone.dataset.plan = "premium";
+          phone.dataset.calendar = "synced";
+          calendarRow.dataset.state = "synced";
+          if (manualWindowCard) manualWindowCard.hidden = true;
+          if (plannerLockable) plannerLockable.dataset.synced = "true";
+          connectedView.setAttribute("aria-hidden", "false");
+          connectedView.classList.add("active");
+
+          // Move the Discover focus to Thursday with the updated post-confirmation slots.
+          connectedDayData.th.slots = ["8:30 - 10:30 AM", "3:00 - 5:00 PM"];
+          sortDaySlotsChronologically("th");
+          activeConnectedDay = "th";
+          manualTargetDay = "th";
+          renderConnectedDay();
+        };
+
+        const buildRandomLindseySuggestions = (excludedItems = []) => {
+          const excludedKeys = new Set(excludedItems.map((item) => getSuggestionIdentityKey(item)));
+          const candidates = [];
+          mutualDayOrder.forEach((dayKey) => {
+            const dayLabel = connectedDayData[dayKey]?.label || dayKey.toUpperCase();
+            const slots = lindseyMockSchedule[dayKey] || [];
+            slots.forEach((slotLabel) => {
+              const range = parseScheduleRange(slotLabel);
+              if (!range) return;
+              const [startMinutes, endMinutes] = range;
+              const option = {
+                id: `${dayKey}|${startMinutes}-${endMinutes}`,
+                day: dayLabel,
+                label: formatListIntervalLabel(startMinutes, endMinutes),
+                duration: Math.max(0.5, (endMinutes - startMinutes) / 60),
+              };
+              if (!excludedKeys.has(option.id)) candidates.push(option);
+            });
+          });
+          const source = candidates.length > 0 ? candidates : [];
+          if (source.length === 0) return [];
+          const shuffled = [...source];
+          for (let i = shuffled.length - 1; i > 0; i -= 1) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+          }
+          const randomCount = Math.floor(Math.random() * 4) + 1;
+          return shuffled.slice(0, Math.min(randomCount, shuffled.length));
+        };
+
+        const renderLindseySuggestedMessage = () => {
+          if (!incomingSuggestionMessage || !incomingSuggestionList || !incomingAcceptButton) return;
+          if (lindseySuggestedOptions.length === 0) {
+            incomingSuggestionMessage.hidden = true;
+            return;
+          }
+          incomingSuggestionList.innerHTML = lindseySuggestedOptions
+            .map(
+              (option) => `
+                <button class="incoming-option ${lindseySelectedOptionId === option.id ? "active" : ""}" type="button" data-option-id="${option.id}" data-day="${option.day}" data-label="${option.label}" data-duration="${option.duration}">
+                  <span>
+                    <p class="incoming-option-title">${option.day}, ${option.label}</p>
+                    <p class="incoming-option-subtitle">${formatDurationBlockLabel(option.duration)}</p>
+                  </span>
+                  <span class="incoming-option-radio" aria-hidden="true"></span>
+                </button>
+              `
+            )
+            .join("");
+          incomingAcceptButton.hidden = lindseySelectedOptionId.length === 0;
+          incomingSuggestionMessage.hidden = false;
+          if (chatThreadBody) chatThreadBody.scrollTop = chatThreadBody.scrollHeight;
+        };
+
+        const queueLindseySuggestedMessage = (excludedItems) => {
+          clearLindseyResponseTimeout();
+          clearLindseyAcceptanceTimeout();
+          lindseySuggestedOptions = [];
+          lindseySelectedOptionId = "";
+          renderLindseySuggestedMessage();
+
+          if (kevinSuggestionRounds >= 2) {
+            const autoAcceptDelayMs = 1100 + Math.floor(Math.random() * 900);
+            lindseyAcceptanceTimeout = window.setTimeout(() => {
+              if (!excludedItems || excludedItems.length === 0) {
+                lindseyAcceptanceTimeout = null;
+                return;
+              }
+              const accepted = excludedItems[Math.floor(Math.random() * excludedItems.length)];
+              appendMeetingConfirmationCard({
+                statusText: "Lindsey accepted your invite request",
+                day: accepted.day || "Monday",
+                label: accepted.label || "",
+                duration: accepted.duration || 1,
+              });
+              lindseyAcceptanceTimeout = null;
+            }, autoAcceptDelayMs);
+            return;
+          }
+
+          const delayMs = 1300 + Math.floor(Math.random() * 1200);
+          lindseyResponseTimeout = window.setTimeout(() => {
+            lindseySuggestedOptions = buildRandomLindseySuggestions(excludedItems);
+            lindseySelectedOptionId = "";
+            if (lindseySuggestedOptions.length > 0 && chatThreadBody) {
+              const previousActive = chatThreadBody.querySelector('.incoming-suggestion-message[data-active="true"]');
+              if (previousActive instanceof HTMLElement) {
+                previousActive.dataset.active = "false";
+                const oldAcceptButton = previousActive.querySelector(".incoming-accept-button");
+                const oldSuggestButton = previousActive.querySelector(".incoming-suggest-other-button");
+                if (oldAcceptButton instanceof HTMLButtonElement) oldAcceptButton.hidden = true;
+                if (oldSuggestButton instanceof HTMLButtonElement) oldSuggestButton.hidden = true;
+                previousActive.querySelectorAll(".incoming-option").forEach((button) => {
+                  if (button instanceof HTMLButtonElement) button.disabled = true;
+                });
+              }
+              const incomingCard = document.createElement("article");
+              incomingCard.className = "incoming-suggestion-message";
+              incomingCard.dataset.active = "true";
+              incomingCard.innerHTML = `
+                <p class="incoming-suggestion-title">Lindsey Suggested a New Meetup Request</p>
+                <div class="incoming-suggestion-list">
+                  ${lindseySuggestedOptions
+                    .map(
+                      (option) => `
+                        <button class="incoming-option" type="button" data-option-id="${option.id}" data-day="${option.day}" data-label="${option.label}" data-duration="${option.duration}">
+                          <span>
+                            <p class="incoming-option-title">${option.day}, ${option.label}</p>
+                            <p class="incoming-option-subtitle">${formatDurationBlockLabel(option.duration)}</p>
+                          </span>
+                          <span class="incoming-option-radio" aria-hidden="true"></span>
+                        </button>
+                      `
+                    )
+                    .join("")}
+                </div>
+                <button class="incoming-accept-button" type="button" hidden>Accept</button>
+                <button class="incoming-suggest-other-button" type="button">Suggest another time</button>
+              `;
+              chatThreadBody.appendChild(incomingCard);
+              chatThreadBody.scrollTop = chatThreadBody.scrollHeight;
+              updateChatHistoryPreview("Lindsey suggested new meetup options");
+            }
+            lindseyResponseTimeout = null;
+          }, delayMs);
         };
 
         const isIntervalSelected = (dayKey, startMinutes, endMinutes) => {
@@ -756,9 +1022,31 @@ export function initializeBumbleFlow() {
           };
         };
 
+        const getLindseySuggestionsByDay = () => {
+          const suggestionsByDay = mutualDayOrder.reduce((acc, dayKey) => {
+            acc[dayKey] = [];
+            return acc;
+          }, {});
+          lindseySuggestedOptions.forEach((option) => {
+            const idMatch = (option?.id || "").match(/^([a-z]+)\|(\d+)-(\d+)$/i);
+            if (!idMatch) return;
+            const dayKey = idMatch[1];
+            const startMinutes = Number(idMatch[2]);
+            const endMinutes = Number(idMatch[3]);
+            if (!suggestionsByDay[dayKey]) return;
+            if (!Number.isFinite(startMinutes) || !Number.isFinite(endMinutes) || endMinutes <= startMinutes) return;
+            suggestionsByDay[dayKey].push([startMinutes, endMinutes]);
+          });
+          Object.keys(suggestionsByDay).forEach((dayKey) => {
+            suggestionsByDay[dayKey] = mergeIntervals(suggestionsByDay[dayKey]);
+          });
+          return suggestionsByDay;
+        };
+
         const renderMutualAvailabilityCalendar = () => {
           if (!mutualGrid) return;
           const mutualByDay = getMutualAvailabilityByDay();
+          const lindseyByDay = getLindseySuggestionsByDay();
           mutualGrid.innerHTML = "";
   
           mutualDayOrder.forEach((dayKey, dayIndex) => {
@@ -771,6 +1059,22 @@ export function initializeBumbleFlow() {
               const spanUnits = (clampedEnd - clampedStart) / MUTUAL_GRID_STEP_MINUTES;
               const slot = document.createElement("span");
               slot.className = "mutual-slot both-free";
+              slot.style.gridColumn = String(dayIndex + 1);
+              slot.style.gridRow = `${Math.floor(startUnits) + 1} / span ${Math.max(1, Math.round(spanUnits))}`;
+              mutualGrid.appendChild(slot);
+            });
+          });
+
+          mutualDayOrder.forEach((dayKey, dayIndex) => {
+            const intervals = lindseyByDay[dayKey] || [];
+            intervals.forEach(([rawStart, rawEnd]) => {
+              const clampedStart = Math.max(rawStart, MUTUAL_GRID_START_MINUTES);
+              const clampedEnd = Math.min(rawEnd, MUTUAL_GRID_END_MINUTES);
+              if (clampedEnd <= clampedStart) return;
+              const startUnits = (clampedStart - MUTUAL_GRID_START_MINUTES) / MUTUAL_GRID_STEP_MINUTES;
+              const spanUnits = (clampedEnd - clampedStart) / MUTUAL_GRID_STEP_MINUTES;
+              const slot = document.createElement("span");
+              slot.className = "mutual-slot their-suggestion";
               slot.style.gridColumn = String(dayIndex + 1);
               slot.style.gridRow = `${Math.floor(startUnits) + 1} / span ${Math.max(1, Math.round(spanUnits))}`;
               mutualGrid.appendChild(slot);
@@ -878,6 +1182,15 @@ export function initializeBumbleFlow() {
           activeConnectedDay = "m";
           manualTargetDay = "w";
           starredSlots.clear();
+          clearLindseyResponseTimeout();
+          clearLindseyAcceptanceTimeout();
+          kevinSuggestionRounds = 0;
+          lindseySuggestedOptions = [];
+          lindseySelectedOptionId = "";
+          finalizedMeetupDetails = null;
+          if (upcomingMeetupCard) upcomingMeetupCard.hidden = true;
+          if (flowPremiumPill) flowPremiumPill.hidden = true;
+          if (incomingSuggestionMessage) incomingSuggestionMessage.hidden = true;
           inlineEditorVisible = false;
           refreshMutualAvailabilityIfOpen();
           refreshChatSuggestionsIfVisible();
@@ -995,6 +1308,7 @@ export function initializeBumbleFlow() {
           calendarRow.dataset.state = "connect";
           phone.dataset.calendar = "idle";
           calendarAction.disabled = false;
+          weekButtons.forEach((button) => button.classList.remove("active"));
           closeInlineEditor();
           resetConnectedDayData();
           if (manualWindowCard) manualWindowCard.hidden = false;
@@ -1026,19 +1340,7 @@ export function initializeBumbleFlow() {
             if (!target || !phone) return;
             if (target === "discover") {
               event.preventDefault();
-              phone.dataset.page = "discover";
-              closeChatHistory();
-              if (chatThreadOverlay) {
-                chatThreadOverlay.classList.remove("open", "closing");
-                chatThreadOverlay.setAttribute("aria-hidden", "true");
-              }
-              if (mutualAvailabilityOverlay) {
-                mutualAvailabilityOverlay.classList.remove("open", "closing");
-                mutualAvailabilityOverlay.setAttribute("aria-hidden", "true");
-              }
-              phone.classList.remove("chat-thread-open");
-              phone.classList.remove("mutual-availability-open");
-              setActiveVariantUi("discover");
+              openDiscoverPage();
               return;
             }
             if (target === "chats") {
@@ -1116,6 +1418,12 @@ export function initializeBumbleFlow() {
   
         if (openLindseyChatButton) {
           openLindseyChatButton.addEventListener("click", openChatThread);
+        }
+
+        if (upcomingMeetupChat) {
+          upcomingMeetupChat.addEventListener("click", () => {
+            openChatThread();
+          });
         }
   
         if (chatThreadBack) {
@@ -1537,28 +1845,111 @@ export function initializeBumbleFlow() {
         }
   
         const sendSuggestionsToThread = (items) => {
-          if (!sentSuggestionMessage || !sentSuggestionList || !scheduleOptionsCard || items.length === 0) return;
-          sentSuggestionList.innerHTML = items
-            .map(
-              ({ day = "Monday", label, duration = 1 }) => `
-                <div class="sent-suggestion-item">
-                  <p class="sent-suggestion-item-title">${day}, ${label}</p>
-                  <p class="sent-suggestion-item-subtitle">${formatDurationBlockLabel(duration)}</p>
-                </div>
-              `
-            )
-            .join("");
+          if (!scheduleOptionsCard || !items.length || !chatThreadBody) return;
+          kevinSuggestionRounds += 1;
+          const outgoingCard = document.createElement("article");
+          outgoingCard.className = "sent-suggestion-message";
+          outgoingCard.innerHTML = `
+            <p class="sent-suggestion-title">You Suggested a Meetup Request</p>
+            <div class="sent-suggestion-list">
+              ${items
+                .map(
+                  ({ day = "Monday", label, duration = 1 }) => `
+                    <div class="sent-suggestion-item">
+                      <p class="sent-suggestion-item-title">${day}, ${label}</p>
+                      <p class="sent-suggestion-item-subtitle">${formatDurationBlockLabel(duration)}</p>
+                    </div>
+                  `
+                )
+                .join("")}
+            </div>
+          `;
+          chatThreadBody.appendChild(outgoingCard);
           const latest = items[items.length - 1];
           if (latest) {
             const extraCount = items.length - 1;
-            latestChatPreview = extraCount > 0
+            const previewText = extraCount > 0
               ? `You suggested: ${latest.day}, ${latest.label} +${extraCount} more`
               : `You suggested: ${latest.day}, ${latest.label}`;
-            if (chatHistoryLastMessage) chatHistoryLastMessage.textContent = latestChatPreview;
+            updateChatHistoryPreview(previewText);
           }
           scheduleOptionsCard.hidden = true;
-          sentSuggestionMessage.hidden = false;
+          chatThreadBody.scrollTop = chatThreadBody.scrollHeight;
+          queueLindseySuggestedMessage(items);
         };
+
+        if (chatThreadBody) {
+          chatThreadBody.addEventListener("click", (event) => {
+            const target = event.target;
+            if (!(target instanceof HTMLElement)) return;
+
+            const optionButton = target.closest(".incoming-option");
+            if (optionButton instanceof HTMLButtonElement) {
+              const optionCard = optionButton.closest(".incoming-suggestion-message");
+              if (!(optionCard instanceof HTMLElement) || optionCard.dataset.active !== "true") return;
+              optionCard.querySelectorAll(".incoming-option.active").forEach((activeButton) => {
+                if (activeButton instanceof HTMLElement) activeButton.classList.remove("active");
+              });
+              optionButton.classList.add("active");
+              const acceptButton = optionCard.querySelector(".incoming-accept-button");
+              if (acceptButton instanceof HTMLButtonElement) {
+                acceptButton.hidden = false;
+                acceptButton.disabled = false;
+                acceptButton.textContent = "Accept";
+              }
+              return;
+            }
+
+            const acceptButton = target.closest(".incoming-accept-button");
+            if (acceptButton instanceof HTMLButtonElement) {
+              const optionCard = acceptButton.closest(".incoming-suggestion-message");
+              if (!(optionCard instanceof HTMLElement) || optionCard.dataset.active !== "true") return;
+              const selectedOption = optionCard.querySelector(".incoming-option.active");
+              if (!(selectedOption instanceof HTMLElement)) return;
+              const day = selectedOption.dataset.day || "Lindsey";
+              const label = selectedOption.dataset.label || "";
+              const duration = Number(selectedOption.dataset.duration || "1");
+              updateChatHistoryPreview(`You accepted: ${day}, ${label}`);
+              appendMeetingConfirmationCard({
+                statusText: "You accepted Lindsey’s invite request",
+                day,
+                label,
+                duration,
+              });
+              lindseySelectedOptionId = "";
+              lindseySuggestedOptions = [];
+              optionCard.remove();
+              return;
+            }
+
+            const suggestAnotherButton = target.closest(".incoming-suggest-other-button");
+            if (suggestAnotherButton instanceof HTMLButtonElement) {
+              const optionCard = suggestAnotherButton.closest(".incoming-suggestion-message");
+              if (!(optionCard instanceof HTMLElement) || optionCard.dataset.active !== "true") return;
+              openMutualAvailability();
+              updateChatHistoryPreview("You asked to suggest another time");
+              return;
+            }
+
+            const actionButton = target.closest(".meeting-action-btn");
+            if (actionButton instanceof HTMLButtonElement) {
+              const action = actionButton.dataset.action || "";
+              if (action === "add-bumble-flow") {
+                const confirmation = actionButton.closest(".meeting-confirmation-message");
+                if (confirmation instanceof HTMLElement) {
+                  const day = confirmation.dataset.day || finalizedMeetupDetails?.day || "Thursday";
+                  const label = confirmation.dataset.label || finalizedMeetupDetails?.label || "12:30 - 1:30 PM";
+                  const duration = Number(confirmation.dataset.duration || `${finalizedMeetupDetails?.duration || 1}`);
+                  applyFinalizedMeetupToDiscover({ day, label, duration });
+                } else {
+                  applyFinalizedMeetupToDiscover(finalizedMeetupDetails);
+                }
+                openDiscoverPage();
+                updateChatHistoryPreview("Meetup added to Bumble Flow");
+              }
+            }
+          });
+        }
 
         if (mutualSelectionSend) {
           mutualSelectionSend.addEventListener("click", () => {
@@ -1598,5 +1989,5 @@ export function initializeBumbleFlow() {
   
         renderChatSuggestions();
         updateSendSuggestionState();
-        if (chatHistoryLastMessage) chatHistoryLastMessage.textContent = latestChatPreview;
+        updateChatHistoryPreview(latestChatPreview);
 }
