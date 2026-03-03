@@ -139,24 +139,24 @@ export function initializeBumbleFlow() {
         const selectedTimeSlots = new Set();
         const navIconSrc = {
           profile: {
-            filled: "/assets/icons/Property 1=Person Filled.svg",
-            outline: "/assets/icons/Property 1=Person Not Filled.svg",
+            filled: "assets/icons/Property 1=Person Filled.svg",
+            outline: "assets/icons/Property 1=Person Not Filled.svg",
           },
           discover: {
-            filled: "/assets/icons/Property 1=Discover Filled.svg",
-            outline: "/assets/icons/Property 1=Discover Not Filled.svg",
+            filled: "assets/icons/Property 1=Discover Filled.svg",
+            outline: "assets/icons/Property 1=Discover Not Filled.svg",
           },
           people: {
-            filled: "/assets/icons/Property 1=Bumble Filled.svg",
-            outline: "/assets/icons/Property 1=Bumble Not Filled.svg",
+            filled: "assets/icons/Property 1=Bumble Filled.svg",
+            outline: "assets/icons/Property 1=Bumble Not Filled.svg",
           },
           liked: {
-            filled: "/assets/icons/Property 1=Heart Filled.svg",
-            outline: "/assets/icons/Property 1=Heart Not Filled.svg",
+            filled: "assets/icons/Property 1=Heart Filled.svg",
+            outline: "assets/icons/Property 1=Heart Not Filled.svg",
           },
           chats: {
-            filled: "/assets/icons/Property 1=Chat Filled.svg",
-            outline: "/assets/icons/Property 1=Chat Not Filled.svg",
+            filled: "assets/icons/Property 1=Chat Filled.svg",
+            outline: "assets/icons/Property 1=Chat Not Filled.svg",
           },
         };
   
@@ -197,9 +197,9 @@ export function initializeBumbleFlow() {
           const cell = document.querySelector(".status-cell");
           const wifi = document.querySelector(".status-wifi");
           const battery = document.querySelector(".status-battery");
-          if (cell) cell.src = "/assets/icons/Cellular Connection.svg";
-          if (wifi) wifi.src = "/assets/icons/Wifi.svg";
-          if (battery) battery.src = "/assets/icons/Battery.svg";
+          if (cell) cell.src = "assets/icons/Cellular Connection.svg";
+          if (wifi) wifi.src = "assets/icons/Wifi.svg";
+          if (battery) battery.src = "assets/icons/Battery.svg";
         };
   
         const applyCalendarIcons = () => {
@@ -222,10 +222,10 @@ export function initializeBumbleFlow() {
   
         const applySummaryIcons = () => {
           document.querySelectorAll(".name-heart").forEach((icon) => {
-            icon.src = "/assets/icons/Property 1=Heart Not Filled.svg";
+            icon.src = "assets/icons/Property 1=Heart Not Filled.svg";
           });
           document.querySelectorAll(".name-verified").forEach((icon) => {
-            icon.src = "/assets/icons/Property 1=Verified.svg";
+            icon.src = "assets/icons/Property 1=Verified.svg";
           });
         };
   

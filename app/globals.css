@@ -1,69 +1,69 @@
 @font-face {
   font-family: "Euclid Circular A";
-  src: url("/assets/fonts/Euclid Circular A Light.ttf") format("truetype");
+  src: url("../assets/fonts/Euclid Circular A Light.ttf") format("truetype");
   font-weight: 300;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Euclid Circular A";
-  src: url("/assets/fonts/Euclid Circular A Light Italic.ttf") format("truetype");
+  src: url("../assets/fonts/Euclid Circular A Light Italic.ttf") format("truetype");
   font-weight: 300;
   font-style: italic;
 }
 
 @font-face {
   font-family: "Euclid Circular A";
-  src: url("/assets/fonts/Euclid Circular A Regular.ttf") format("truetype");
+  src: url("../assets/fonts/Euclid Circular A Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Euclid Circular A";
-  src: url("/assets/fonts/Euclid Circular A Italic.ttf") format("truetype");
+  src: url("../assets/fonts/Euclid Circular A Italic.ttf") format("truetype");
   font-weight: 400;
   font-style: italic;
 }
 
 @font-face {
   font-family: "Euclid Circular A";
-  src: url("/assets/fonts/Euclid Circular A Medium.ttf") format("truetype");
+  src: url("../assets/fonts/Euclid Circular A Medium.ttf") format("truetype");
   font-weight: 500;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Euclid Circular A";
-  src: url("/assets/fonts/Euclid Circular A Medium Italic.ttf") format("truetype");
+  src: url("../assets/fonts/Euclid Circular A Medium Italic.ttf") format("truetype");
   font-weight: 500;
   font-style: italic;
 }
 
 @font-face {
   font-family: "Euclid Circular A";
-  src: url("/assets/fonts/Euclid Circular A SemiBold.ttf") format("truetype");
+  src: url("../assets/fonts/Euclid Circular A SemiBold.ttf") format("truetype");
   font-weight: 600;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Euclid Circular A";
-  src: url("/assets/fonts/Euclid Circular A SemiBold Italic.ttf") format("truetype");
+  src: url("../assets/fonts/Euclid Circular A SemiBold Italic.ttf") format("truetype");
   font-weight: 600;
   font-style: italic;
 }
 
 @font-face {
   font-family: "Euclid Circular A";
-  src: url("/assets/fonts/Euclid Circular A Bold.ttf") format("truetype");
+  src: url("../assets/fonts/Euclid Circular A Bold.ttf") format("truetype");
   font-weight: 700;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Euclid Circular A";
-  src: url("/assets/fonts/Euclid Circular A Bold Italic.ttf") format("truetype");
+  src: url("../assets/fonts/Euclid Circular A Bold Italic.ttf") format("truetype");
   font-weight: 700;
   font-style: italic;
 }
@@ -310,7 +310,7 @@ body {
 }
 
 .upcoming-meetup-avatar {
-  background: url("/assets/images/source/Lindsey.jpg") center / cover no-repeat;
+  background: url("../assets/images/source/Lindsey.jpg") center / cover no-repeat;
   border-radius: 14px;
   display: block;
   height: 56px;
@@ -357,7 +357,7 @@ body {
 }
 
 .upcoming-meetup-chat::before {
-  background: url("/assets/icons/Property 1=Chat Filled.svg") center / 30px 30px no-repeat;
+  background: url("../assets/icons/Property 1=Chat Filled.svg") center / 30px 30px no-repeat;
   content: "";
   display: block;
   height: 32px;
@@ -1291,7 +1291,7 @@ body {
 }
 
 .liked-heart-badge::before {
-  background: url("/assets/icons/Property 1=Heart Filled.svg") center / 22px 20px no-repeat;
+  background: url("../assets/icons/Property 1=Heart Filled.svg") center / 22px 20px no-repeat;
   content: "";
   inset: 0;
   position: absolute;
@@ -1391,14 +1391,14 @@ body {
 }
 
 .pair-photo.left {
-  background-image: url("/assets/images/source/Kevin.jpg");
+  background-image: url("../assets/images/source/Kevin.jpg");
   border: 2px solid #fff;
   left: 79px;
   transform: rotate(-15deg);
 }
 
 .pair-photo.right {
-  background-image: url("/assets/images/source/Lindsey.jpg");
+  background-image: url("../assets/images/source/Lindsey.jpg");
   left: 190px;
   transform: rotate(15deg);
 }
@@ -1728,7 +1728,7 @@ body {
 }
 
 .chat-avatar {
-  background-image: url("/assets/images/source/Lindsey.jpg");
+  background-image: url("../assets/images/source/Lindsey.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -1859,7 +1859,7 @@ body {
 }
 
 .chat-thread-avatar {
-  background-image: url("/assets/images/source/Lindsey.jpg");
+  background-image: url("../assets/images/source/Lindsey.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -2139,14 +2139,14 @@ body {
 }
 
 .mutual-list-clock::before {
-  -webkit-mask-image: url("/assets/icons/Mobile/Chats/List%20View%20of%20Availability/Icons.svg");
+  -webkit-mask-image: url("../assets/icons/Mobile/Chats/List%20View%20of%20Availability/Icons.svg");
   -webkit-mask-position: center;
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-size: contain;
   background-color: #6b7280;
   content: "";
   display: block;
-  mask-image: url("/assets/icons/Mobile/Chats/List%20View%20of%20Availability/Icons.svg");
+  mask-image: url("../assets/icons/Mobile/Chats/List%20View%20of%20Availability/Icons.svg");
   mask-position: center;
   mask-repeat: no-repeat;
   mask-size: contain;
@@ -3035,7 +3035,7 @@ body {
 }
 
 .gcal-badge {
-  background: url("/assets/images/Mobile/Chats/Accepting%20different%20day%20time%20suggestions/image%202.png") center / contain no-repeat;
+  background: url("../assets/images/Mobile/Chats/Accepting%20different%20day%20time%20suggestions/image%202.png") center / contain no-repeat;
 }
 
 .flow-badge {
@@ -3043,7 +3043,7 @@ body {
 }
 
 .flow-badge::before {
-  background: url("/assets/icons/Property%201=Bumble%20Filled.svg") center / 14px 14px no-repeat;
+  background: url("../assets/icons/Property%201=Bumble%20Filled.svg") center / 14px 14px no-repeat;
   content: "";
   display: block;
   height: 14px;
@@ -3084,7 +3084,7 @@ body {
 }
 
 .meeting-venue-thumb {
-  background: url("/assets/images/Mobile/Chats/Accepting%20different%20day%20time%20suggestions/Image%20of%20bar.png")
+  background: url("../assets/images/Mobile/Chats/Accepting%20different%20day%20time%20suggestions/Image%20of%20bar.png")
     center / cover no-repeat;
   border-radius: 14px;
   display: block;
