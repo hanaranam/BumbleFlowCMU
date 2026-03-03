@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const repo = "BumbleFlowCMU";
-const isGithubPagesBuild = process.env.GITHUB_ACTIONS === "true";
+const isProd = process.env.NODE_ENV === "production";
 
 const nextConfig = {
   reactStrictMode: true,
@@ -9,8 +9,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  basePath: isGithubPagesBuild ? `/${repo}` : "",
-  assetPrefix: isGithubPagesBuild ? `/${repo}/` : "",
+  basePath: isProd ? `/${repo}` : "",
+  assetPrefix: isProd ? `/${repo}/` : "",
 };
 
 export default nextConfig;
