@@ -2412,10 +2412,10 @@ body {
 .mutual-selection-drawer {
   background: #fff;
   border-radius: 22px 22px 0 0;
-  bottom: 0;
+  bottom: calc(-20px - env(safe-area-inset-bottom));
   box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.1);
   left: auto;
-  margin-bottom: -16px;
+  margin-bottom: 0;
   margin-left: -16px;
   margin-right: -16px;
   opacity: 0;
@@ -3351,58 +3351,9 @@ body {
 
 .benefit-icon img {
   display: block;
-}
-
-.benefit-icon img[src*="f21cad57"] {
-  height: 9.539px;
-  width: 9.988px;
-}
-
-.benefit-icon img[src*="bb0eaed0"] {
-  height: 10.501px;
-  width: 11.703px;
-}
-
-.benefit-icon img[src*="b5c191ca"] {
-  height: 11.667px;
-  width: 10.5px;
-}
-
-.benefit-icon img[src*="9533f93e"] {
-  height: 8.75px;
-  width: 13.125px;
-}
-
-.benefit-icon img[src*="6d99a9d3"] {
-  height: 10.5px;
-  width: 11.667px;
-}
-
-.benefit-icon img[src*="cc9c9275"] {
-  height: 14px;
-  width: 14px;
-}
-
-.benefit-icon-bulb .bulb-group {
-  height: 11.667px;
-  left: 7px;
-  position: absolute;
-  top: 6px;
-  width: 8.75px;
-}
-
-.benefit-icon-bulb .bulb-overlay {
-  height: 14px;
-  left: 4.7px;
-  position: absolute;
-  top: 4.8px;
-  width: 14px;
-}
-
-.benefit-icon-bulb .bulb-group img,
-.benefit-icon-bulb .bulb-overlay img {
-  height: 100%;
-  width: 100%;
+  filter: brightness(0) invert(1);
+  height: 12px;
+  width: 12px;
 }
 
 .benefit-copy {
