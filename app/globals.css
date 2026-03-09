@@ -1138,8 +1138,7 @@ body {
   filter: blur(5px);
 }
 
-.phone[data-plan="free"] .tag-row .yellow-tag:not(:first-child),
-.phone[data-plan="free"] .tag-row .dark-tag:not(:first-child) {
+.phone[data-plan="free"] .tag-row .yellow-tag:not(:first-child) {
   filter: blur(3px);
   opacity: 0.75;
 }
